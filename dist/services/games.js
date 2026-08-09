@@ -65,19 +65,26 @@ async function playSlots(discordId, bet) {
     const a = spinReel();
     const b = spinReel();
     const c = spinReel();
+    // 3 identiques = JACKPOT (gain net = mise × multiplicateur du symbole).
+    // 2 identiques = mise REMBOURSÉE (gain net 0). Sinon : perdu.
     let multiplier = 0;
+    let refund = false;
     if (a === b && b === c)
-        multiplier = games_1.SLOT_MULTIPLIERS[a] ?? 3; // 3 identiques
+        multiplier = games_1.SLOT_MULTIPLIERS[a] ?? 3;
     else if (a === b || b === c || a === c)
-        multiplier = 2; // 2 identiques
-    // Règle : gain NET = mise × multiplicateur. On rend donc la mise + le gain,
-    // soit un crédit de mise × (multiplicateur + 1).
-    const won = multiplier > 0 ? bet * (multiplier + 1) : 0;
+        refund = true;
+    let won; // total crédité (mise rendue + gain éventuel)
+    if (multiplier > 0)
+        won = bet * (multiplier + 1);
+    else if (refund)
+        won = bet; // on rend juste la mise
+    else
+        won = 0;
     const newBalance = won > 0 ? await credit(discordId, won) : charged.yumz;
     await Transaction_1.Transaction.create({
         discordId,
         type: 'game_slots',
-        amount: won > 0 ? won - bet : -bet,
+        amount: won - bet, // >0 jackpot · 0 remboursé · -mise perdu
     });
-    return { status: 'ok', reels: [a, b, c], multiplier, won, bet, newBalance };
+    return { status: 'ok', reels: [a, b, c], multiplier, refund, won, bet, newBalance };
 }

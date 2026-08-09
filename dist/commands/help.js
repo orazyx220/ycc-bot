@@ -49,7 +49,7 @@ const DETAILS = {
             { name: 'choix', desc: 'pile ou face (pour /parier pileouface)', required: false },
         ],
         examples: ['/parier pileouface mise:100 choix:pile', '/parier des mise:200', '/parier machine mise:50'],
-        notes: 'Machine : 3 symboles identiques = gros gain, 2 identiques = x2.',
+        notes: 'Machine : 3 identiques = jackpot (mise × mult) ; 2 identiques = mise remboursée ; sinon perdu.',
     },
     roue: {
         name: '/roue', admin: false,

@@ -107,12 +107,15 @@ export const parier: Command = {
         await interaction.reply({ content: `❌ Pas assez de Yumz (tu as **${res.balance}**).`, flags: MessageFlags.Ephemeral });
         return;
       }
+      const net = res.won - res.bet;
       const verdict =
-        res.won > 0
-          ? `🎉 Gagné ! **+${res.won - res.bet} Yumz** — mise ${res.bet} × ${res.multiplier} !`
-          : `😢 Perdu... **-${res.bet} Yumz**.`;
+        net > 0
+          ? `🎉 **JACKPOT !** +${net} Yumz — 3 identiques (mise × ${res.multiplier}) !`
+          : res.refund
+            ? '🤝 Deux symboles identiques — mise remboursée (**±0**).'
+            : `😢 Perdu... **-${res.bet} Yumz**.`;
       const embed = new EmbedBuilder()
-        .setColor(res.won > 0 ? 0x2ecc71 : 0xe74c3c)
+        .setColor(net > 0 ? 0x2ecc71 : res.refund ? 0xf1c40f : 0xe74c3c)
         .setTitle('🎰 Machine à sous')
         .setDescription(`[ ${res.reels.join(' | ')} ]\n${verdict}`)
         .setFooter({ text: `Solde : ${res.newBalance} Yumz` });

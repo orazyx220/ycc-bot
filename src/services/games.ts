@@ -82,7 +82,7 @@ export async function playDice(discordId: string, bet: number): Promise<DiceResu
 // --- Machine à sous ---
 export type SlotsResult =
   | { status: 'insufficient'; balance: number }
-  | { status: 'ok'; reels: string[]; multiplier: number; won: number; bet: number; newBalance: number };
+  | { status: 'ok'; reels: string[]; multiplier: number; refund: boolean; won: number; bet: number; newBalance: number };
 
 function spinReel(): string {
   return SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)]!;
@@ -96,19 +96,24 @@ export async function playSlots(discordId: string, bet: number): Promise<SlotsRe
   const b = spinReel();
   const c = spinReel();
 
+  // 3 identiques = JACKPOT (gain net = mise × multiplicateur du symbole).
+  // 2 identiques = mise REMBOURSÉE (gain net 0). Sinon : perdu.
   let multiplier = 0;
-  if (a === b && b === c) multiplier = SLOT_MULTIPLIERS[a] ?? 3; // 3 identiques
-  else if (a === b || b === c || a === c) multiplier = 2; // 2 identiques
+  let refund = false;
+  if (a === b && b === c) multiplier = SLOT_MULTIPLIERS[a] ?? 3;
+  else if (a === b || b === c || a === c) refund = true;
 
-  // Règle : gain NET = mise × multiplicateur. On rend donc la mise + le gain,
-  // soit un crédit de mise × (multiplicateur + 1).
-  const won = multiplier > 0 ? bet * (multiplier + 1) : 0;
+  let won: number; // total crédité (mise rendue + gain éventuel)
+  if (multiplier > 0) won = bet * (multiplier + 1);
+  else if (refund) won = bet; // on rend juste la mise
+  else won = 0;
+
   const newBalance = won > 0 ? await credit(discordId, won) : charged.yumz;
 
   await Transaction.create({
     discordId,
     type: 'game_slots',
-    amount: won > 0 ? won - bet : -bet,
+    amount: won - bet, // >0 jackpot · 0 remboursé · -mise perdu
   });
-  return { status: 'ok', reels: [a, b, c], multiplier, won, bet, newBalance };
+  return { status: 'ok', reels: [a, b, c], multiplier, refund, won, bet, newBalance };
 }
