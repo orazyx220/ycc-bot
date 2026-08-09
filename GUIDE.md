@@ -39,16 +39,14 @@ Quand tu écris dans certains salons ou avec certains rôles, tes gains sont mul
 
 ## 🎴 Les cartes
 
-Chaque carte a une **rareté** (qui définit sa couleur) :
+Chaque carte a une **rareté** (de la plus commune à la plus rare) :
 
-| Rareté | Couleur |
-|---|---|
-| Commune | Gris |
-| Rare | Bleu |
-| Épique | Violet |
-| Légendaire | Or (jaune) |
-| Mystère | Turquoise |
-| Evil | Rouge sombre |
+- ⚪ Commune
+- 🔵 Rare
+- 🟣 Épique
+- 🟡 Légendaire
+- 🎭 Mystère
+- 😈 Evil
 
 ### Comment obtenir des cartes ?
 - 🛒 **`/boutique`** — achète directement la carte que tu veux avec tes Yumz.
