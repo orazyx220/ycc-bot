@@ -1,0 +1,11 @@
+# Dépendances installées par npm
+node_modules/
+
+# Secrets — NE JAMAIS mettre sur GitHub
+.env
+
+# Build TypeScript
+dist/
+
+# Logs
+*.log
