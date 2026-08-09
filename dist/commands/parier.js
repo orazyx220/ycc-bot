@@ -88,7 +88,7 @@ exports.parier = {
                 return;
             }
             const verdict = res.won > 0
-                ? `🎉 Gagné ! Mise **${res.bet}** × **${res.multiplier}** = tu récupères **${res.won} Yumz** (gain net **+${res.won - res.bet}**).`
+                ? `🎉 Gagné ! **+${res.won - res.bet} Yumz** — mise ${res.bet} × ${res.multiplier} !`
                 : `😢 Perdu... **-${res.bet} Yumz**.`;
             const embed = new discord_js_1.EmbedBuilder()
                 .setColor(res.won > 0 ? 0x2ecc71 : 0xe74c3c)

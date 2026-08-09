@@ -70,7 +70,9 @@ async function playSlots(discordId, bet) {
         multiplier = games_1.SLOT_MULTIPLIERS[a] ?? 3; // 3 identiques
     else if (a === b || b === c || a === c)
         multiplier = 2; // 2 identiques
-    const won = multiplier > 0 ? bet * multiplier : 0;
+    // Règle : gain NET = mise × multiplicateur. On rend donc la mise + le gain,
+    // soit un crédit de mise × (multiplicateur + 1).
+    const won = multiplier > 0 ? bet * (multiplier + 1) : 0;
     const newBalance = won > 0 ? await credit(discordId, won) : charged.yumz;
     await Transaction_1.Transaction.create({
         discordId,
