@@ -41,12 +41,14 @@ Quand tu écris dans certains salons ou avec certains rôles, tes gains sont mul
 
 Chaque carte a une **rareté** (de la plus commune à la plus rare) :
 
-- ⚪ Commune
-- 🔵 Rare
-- 🟣 Épique
-- 🟡 Légendaire
-- 🎭 Mystère
-- 😈 Evil
+| Rareté |
+|---|
+| ⚪ Commune |
+| 🔵 Rare |
+| 🟣 Épique |
+| 🟡 Légendaire |
+| 🎭 Mystère |
+| 😈 Evil |
 
 ### Comment obtenir des cartes ?
 - 🛒 **`/boutique`** — achète directement la carte que tu veux avec tes Yumz.
