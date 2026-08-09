@@ -12,13 +12,13 @@ import {
 import type { Command } from '../types';
 import { IMGUR_GUIDE } from '../config/messages';
 
-/** Lien vers le guide complet (PDF hébergé sur le dépôt GitHub public). */
-const GUIDE_URL = 'https://github.com/orazyx220/ycc-bot/blob/main/GUIDE.pdf';
+/** Lien vers le guide complet (site web GitHub Pages, page propre pour les membres). */
+const GUIDE_URL = 'https://orazyx220.github.io/ycc-bot/';
 
 /** Bouton-lien « Guide complet » ajouté aux réponses de /help. */
 function guideRow(): ActionRowBuilder<ButtonBuilder> {
   return new ActionRowBuilder<ButtonBuilder>().addComponents(
-    new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('📖 Guide complet (PDF)').setURL(GUIDE_URL),
+    new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('📖 Guide complet').setURL(GUIDE_URL),
   );
 }
 
@@ -371,7 +371,7 @@ export const help: Command = {
       .setTitle('📖 Aide — Commandes YCC')
       .setDescription(
         'Tape `/help commande:<nom>` pour le détail d’une commande. Les Yumz se gagnent en discutant et via `/daily` !\n' +
-          `📖 **Guide complet (PDF)** : ${GUIDE_URL}`,
+          `📖 **Guide complet** : ${GUIDE_URL}`,
       )
       .addFields({ name: '👤 Commandes membres', value: memberList });
 

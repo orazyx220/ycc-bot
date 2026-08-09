@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide du bot YCC</title>
+<style>
+  :root {
+    --accent: #5865F2; --bg: #ffffff; --fg: #1f2328; --muted: #57606a;
+    --card: #f6f8fa; --border: #d0d7de; --thead: #5865F2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --card: #161b22; --border: #30363d; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1 { color: var(--accent); font-size: 2rem; border-bottom: 3px solid var(--accent); padding-bottom: 8px; }
+  h2 { color: var(--accent); margin-top: 2.2rem; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  h3 { margin-top: 1.5rem; }
+  a { color: var(--accent); }
+  code { background: var(--card); padding: 2px 6px; border-radius: 5px;
+    font-family: "SF Mono", Consolas, Menlo, monospace; font-size: .9em; }
+  pre { background: var(--card); padding: 14px; border-radius: 8px; overflow-x: auto; }
+  blockquote { background: var(--card); border-left: 4px solid var(--accent);
+    margin: 1rem 0; padding: 8px 16px; color: var(--muted); border-radius: 0 8px 8px 0; }
+  .table-wrap { overflow-x: auto; margin: 1rem 0; }
+  table { border-collapse: collapse; width: 100%; }
+  th { background: var(--thead); color: #fff; text-align: left; padding: 10px; }
+  td { border: 1px solid var(--border); padding: 10px; }
+  tr:nth-child(even) td { background: var(--card); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🎴 Guide du bot YCC</h1>
+<p>Bienvenue sur <strong>YCC</strong>, le bot de <strong>collection de cartes</strong> et d'<strong>économie Yumz</strong> de ton serveur !
+Gagne des <strong>Yumz</strong> (la monnaie du serveur) en étant actif, dépense-les pour <strong>collectionner des cartes</strong> de différentes raretés, joue à des <strong>mini-jeux</strong>, échange avec les autres membres, et tente ta chance à la <strong>roue de la fortune</strong> !</p>
+<hr />
+<h2>🪙 C'est quoi les Yumz ?</h2>
+<p>Les <strong>Yumz</strong> sont la monnaie virtuelle du serveur. Tu t'en sers pour <strong>acheter des cartes</strong>, <strong>ouvrir des boosters</strong> et <strong>parier</strong> dans les mini-jeux.</p>
+<h3>Comment en gagner ?</h3>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Gain</th>
+<th>Détail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>💬 <strong>Écrire des messages</strong></td>
+<td>25–35 Yumz</td>
+<td>Automatique ! Cooldown de 30 s entre deux gains</td>
+</tr>
+<tr>
+<td>📏 <strong>Messages longs</strong></td>
+<td>jusqu'à 100</td>
+<td>Un long message rapporte plus (plafond 100/message)</td>
+</tr>
+<tr>
+<td>✨ <strong>Salons &amp; rôles bonus</strong></td>
+<td>×1,5 à ×3</td>
+<td>Certains salons/rôles multiplient tes gains (voir plus bas)</td>
+</tr>
+<tr>
+<td>🎁 <strong><code>/daily</code></strong></td>
+<td>550 + streak</td>
+<td>+10 par jour consécutif, jusqu'à 1000/jour</td>
+</tr>
+<tr>
+<td>💼 <strong><code>/travailler</code></strong></td>
+<td>50–150</td>
+<td>Toutes les heures</td>
+</tr>
+<tr>
+<td>🎡 <strong><code>/roue</code></strong></td>
+<td>variable</td>
+<td>Une fois par semaine, gros lots rares</td>
+</tr>
+<tr>
+<td>📈 <strong>Bump du serveur</strong></td>
+<td>500</td>
+<td>Automatique quand tu fais <code>/bump</code> (max 3/jour)</td>
+</tr>
+</tbody>
+</table>
+<h3>✨ Les multiplicateurs de messages</h3>
+<p>Quand tu écris dans certains salons ou avec certains rôles, tes gains sont multipliés :
+- <strong>Rôle Server Booster</strong> : ×2
+- <strong>Rôle Anniversaire</strong> : ×3
+- <strong>Salon général</strong> : ×2,5 · <strong>Gaming / Média / Animaux / Lecture</strong> : ×2 · <strong>Art / Nature / Recette / Cuisine / Haut achat</strong> : ×1,5</p>
+<blockquote>
+<p>On garde <strong>le meilleur rôle × le salon</strong>. Le bonus de longueur, lui, n'est pas multiplié (anti-abus). Total plafonné à <strong>100/message</strong>.</p>
+</blockquote>
+<h3>🔥 Le streak de <code>/daily</code></h3>
+<ul>
+<li>Base : <strong>550 Yumz</strong></li>
+<li><strong>+10</strong> par jour consécutif (jour 2 = 560, jour 3 = 570…)</li>
+<li>Plafonné à <strong>1000/jour</strong></li>
+<li>⚠️ Si tu rates un jour, ton streak repart à <strong>0</strong> !</li>
+</ul>
+<hr />
+<h2>🎴 Les cartes</h2>
+<p>Chaque carte a une <strong>rareté</strong> (qui définit sa couleur) :</p>
+<table>
+<thead>
+<tr>
+<th>Rareté</th>
+<th>Couleur</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Commune</td>
+<td>Gris</td>
+</tr>
+<tr>
+<td>Rare</td>
+<td>Bleu</td>
+</tr>
+<tr>
+<td>Épique</td>
+<td>Violet</td>
+</tr>
+<tr>
+<td>Légendaire</td>
+<td>Or (jaune)</td>
+</tr>
+<tr>
+<td>Mystère</td>
+<td>Turquoise</td>
+</tr>
+<tr>
+<td>Evil</td>
+<td>Rouge sombre</td>
+</tr>
+</tbody>
+</table>
+<h3>Comment obtenir des cartes ?</h3>
+<ul>
+<li>🛒 <strong><code>/boutique</code></strong> — achète directement la carte que tu veux avec tes Yumz.</li>
+<li>🎴 <strong><code>/ouvrir</code></strong> — ouvre un booster (1000 Yumz) et tire une carte <strong>au hasard</strong> selon les probabilités de rareté.</li>
+<li>🎁 <strong>Drops</strong> — le bot fait tomber des cartes dans un salon (à acheter ou gratuites, premier arrivé premier servi).</li>
+<li>🤝 <strong><code>/donner</code></strong> / <strong><code>/echange</code></strong> — reçois des cartes d'autres membres.</li>
+<li>🎡 <strong><code>/roue</code></strong> — une carte fait partie des lots possibles.</li>
+</ul>
+<h3>🎴 Probabilités d'un booster (<code>/ouvrir</code>)</h3>
+<p>Commune 55% · Rare 28% · Épique 12% · Légendaire 4% · Mystère 0,9% · Evil 0,1%
+<em>(Les tirages ne consomment pas le stock : tu peux tomber plusieurs fois sur la même carte.)</em></p>
+<hr />
+<h2>📜 Toutes les commandes</h2>
+<blockquote>
+<p>Astuce : dans Discord, tape <code>/help commande:&lt;nom&gt;</code> pour la fiche détaillée d'une commande.</p>
+</blockquote>
+<h3>👤 Commandes pour tout le monde</h3>
+<table>
+<thead>
+<tr>
+<th>Commande</th>
+<th>Description</th>
+<th>Exemple</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/help</code></td>
+<td>Affiche l'aide (ou le détail d'une commande)</td>
+<td><code>/help commande:daily</code></td>
+</tr>
+<tr>
+<td><code>/ping</code></td>
+<td>Vérifie que le bot répond</td>
+<td><code>/ping</code></td>
+</tr>
+<tr>
+<td><code>/daily</code></td>
+<td>Réclame tes Yumz du jour (avec bonus de streak)</td>
+<td><code>/daily</code></td>
+</tr>
+<tr>
+<td><code>/travailler</code></td>
+<td>Gagne quelques Yumz (toutes les heures)</td>
+<td><code>/travailler</code></td>
+</tr>
+<tr>
+<td><code>/solde</code></td>
+<td>Voir ton solde (ou celui d'un membre)</td>
+<td><code>/solde membre:@Ami</code></td>
+</tr>
+<tr>
+<td><code>/classement</code></td>
+<td>Top des membres les plus riches</td>
+<td><code>/classement</code></td>
+</tr>
+<tr>
+<td><code>/catalogue</code></td>
+<td>Feuillette toutes les cartes existantes</td>
+<td><code>/catalogue</code></td>
+</tr>
+<tr>
+<td><code>/carte</code></td>
+<td>Détail d'une carte précise</td>
+<td><code>/carte id:dragon-epique</code></td>
+</tr>
+<tr>
+<td><code>/boutique</code></td>
+<td>Achète directement des cartes</td>
+<td><code>/boutique</code></td>
+</tr>
+<tr>
+<td><code>/ouvrir</code></td>
+<td>Ouvre un booster (carte aléatoire)</td>
+<td><code>/ouvrir</code></td>
+</tr>
+<tr>
+<td><code>/inventaire</code></td>
+<td>Voir tes cartes (ou celles d'un membre)</td>
+<td><code>/inventaire membre:@Ami</code></td>
+</tr>
+<tr>
+<td><code>/donner</code></td>
+<td>Offre une de tes cartes à un membre</td>
+<td><code>/donner membre:@Ami id:yumz-bleu</code></td>
+</tr>
+<tr>
+<td><code>/echange</code></td>
+<td>Propose un troc de cartes et/ou Yumz</td>
+<td><code>/echange membre:@Ami ma_carte:yumz-bleu sa_carte:carte-neon</code></td>
+</tr>
+<tr>
+<td><code>/parier</code></td>
+<td>Mini-jeux de pari</td>
+<td><code>/parier machine mise:100</code></td>
+</tr>
+<tr>
+<td><code>/roue</code></td>
+<td>Roue de la fortune (1×/semaine)</td>
+<td><code>/roue</code></td>
+</tr>
+</tbody>
+</table>
+<h3>🛡️ Commandes administrateur</h3>
+<table>
+<thead>
+<tr>
+<th>Commande</th>
+<th>Description</th>
+<th>Exemple</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/drop</code></td>
+<td>Poste une carte à acheter/gagner</td>
+<td><code>/drop id:ycc-originel</code></td>
+</tr>
+<tr>
+<td><code>/give_yumz</code></td>
+<td>Donne ou retire des Yumz à un membre</td>
+<td><code>/give_yumz membre:@Ami montant:1000</code></td>
+</tr>
+<tr>
+<td><code>/give_all</code></td>
+<td>Donne des Yumz à <strong>tous</strong> les membres</td>
+<td><code>/give_all montant:10000</code></td>
+</tr>
+<tr>
+<td><code>/reward</code></td>
+<td>Récompense du barème (bump/boost/voice/level)</td>
+<td><code>/reward level membre:@Ami niveau:50</code></td>
+</tr>
+<tr>
+<td><code>/addcard</code></td>
+<td>Crée une nouvelle carte</td>
+<td><code>/addcard nom:… rarete:… description:… lien_image:…</code></td>
+</tr>
+<tr>
+<td><code>/editcard</code></td>
+<td>Modifie une carte existante</td>
+<td><code>/editcard id:dragon-epique prix:3000</code></td>
+</tr>
+<tr>
+<td><code>/delcard</code></td>
+<td>Supprime une carte</td>
+<td><code>/delcard id:dragon-epique</code></td>
+</tr>
+<tr>
+<td><code>/givecard</code></td>
+<td>Offre une carte à un membre</td>
+<td><code>/givecard membre:@Ami id:dragon-epique</code></td>
+</tr>
+<tr>
+<td><code>/reserve</code></td>
+<td>Gère la réserve des drops automatiques</td>
+<td><code>/reserve list</code></td>
+</tr>
+<tr>
+<td><code>/reset</code></td>
+<td>Remet à zéro l'économie (⚠️ irréversible)</td>
+<td><code>/reset cible:tout</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🎲 Les mini-jeux (<code>/parier</code>)</h2>
+<p>Mise tes Yumz et tente ta chance ! Mise entre <strong>10</strong> et <strong>10 000</strong> Yumz.</p>
+<h3>🪙 Pile ou face — <code>/parier pileouface mise:&lt;X&gt; choix:&lt;pile|face&gt;</code></h3>
+<p>50/50. Si tu gagnes, tu <strong>doubles ta mise</strong> ; sinon tu la perds.</p>
+<h3>🎲 Dés — <code>/parier des mise:&lt;X&gt;</code></h3>
+<p>Ton dé contre celui du bot. Le plus haut gagne (double la mise), égalité = mise remboursée.</p>
+<h3>🎰 Machine à sous — <code>/parier machine mise:&lt;X&gt;</code></h3>
+<p>Trois symboles sont tirés parmi 5 : <strong>cerise 🍒, citron 🍋, cloche 🔔, étoile ⭐, diamant 💎</strong>.
+- <strong>3 identiques = JACKPOT</strong> → gain net = <strong>mise × multiplicateur</strong> du symbole (cerise ×3, citron ×4, cloche ×5, étoile ×8, diamant ×15)
+- <strong>2 identiques</strong> → mise <strong>remboursée</strong> (±0)
+- <strong>Tout différent</strong> → mise perdue</p>
+<hr />
+<h2>🎡 La roue de la fortune (<code>/roue</code>)</h2>
+<p><strong>Gratuite, une fois par semaine.</strong> Style loterie : petites sommes fréquentes, gros lots très rares.</p>
+<table>
+<thead>
+<tr>
+<th>Lot</th>
+<th>Chance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🎯 Rien</td>
+<td>25%</td>
+</tr>
+<tr>
+<td>🪙 10 Yumz</td>
+<td>25%</td>
+</tr>
+<tr>
+<td>💵 100 Yumz</td>
+<td>20%</td>
+</tr>
+<tr>
+<td>💶 500 Yumz</td>
+<td>12%</td>
+</tr>
+<tr>
+<td>🎴 Une carte</td>
+<td>8%</td>
+</tr>
+<tr>
+<td>🎁 Tour gratuit (relance)</td>
+<td>4%</td>
+</tr>
+<tr>
+<td>💰 5 000 Yumz</td>
+<td>4%</td>
+</tr>
+<tr>
+<td>💎 50 000 Yumz</td>
+<td>1,5%</td>
+</tr>
+<tr>
+<td>🏆 100 000 Yumz</td>
+<td>0,5%</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🤝 Échanger avec les autres</h2>
+<ul>
+<li><strong><code>/donner membre:@X id:carte</code></strong> — donne une de tes cartes à quelqu'un (sens unique, gratuit).</li>
+<li><strong><code>/echange membre:@X ...</code></strong> — propose un vrai troc : tu offres des cartes et/ou des Yumz, tu demandes des cartes et/ou des Yumz. L'échange ne se fait <strong>que si l'autre accepte</strong> (bouton). Tout est revérifié au moment de l'acceptation.</li>
+</ul>
+<hr />
+<h2>❓ Questions fréquentes</h2>
+<p><strong>Je ne gagne pas de Yumz en écrivant ?</strong>
+Il y a un cooldown de <strong>30 secondes</strong> entre deux gains. Écris, attends 30 s, réécris.</p>
+<p><strong>Pourquoi je ne peux pas refaire <code>/daily</code> ?</strong>
+Il est utilisable <strong>une fois toutes les 24 h</strong>. Le bot t'indique le temps restant.</p>
+<p><strong>J'ai raté un jour de <code>/daily</code>, j'ai perdu mon bonus ?</strong>
+Oui, le streak repart à 0 — mais tu regagnes +10 par jour en recommençant.</p>
+<p><strong>La roue dit que je dois attendre ?</strong>
+Elle est <strong>hebdomadaire</strong> (1×/semaine).</p>
+<hr />
+<p>🎴 <strong>Bonne collection sur YCC !</strong> Pour toute question, demande à un administrateur du serveur.</p>
+</div>
+<script>
+  // Rend les tableaux scrollables horizontalement sur mobile.
+  document.querySelectorAll('table').forEach(function (t) {
+    var w = document.createElement('div'); w.className = 'table-wrap';
+    t.parentNode.insertBefore(w, t); w.appendChild(t);
+  });
+</script>
+</body>
+</html>

@@ -3,11 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.help = void 0;
 const discord_js_1 = require("discord.js");
 const messages_1 = require("../config/messages");
-/** Lien vers le guide complet (PDF hébergé sur le dépôt GitHub public). */
-const GUIDE_URL = 'https://github.com/orazyx220/ycc-bot/blob/main/GUIDE.pdf';
+/** Lien vers le guide complet (site web GitHub Pages, page propre pour les membres). */
+const GUIDE_URL = 'https://orazyx220.github.io/ycc-bot/';
 /** Bouton-lien « Guide complet » ajouté aux réponses de /help. */
 function guideRow() {
-    return new discord_js_1.ActionRowBuilder().addComponents(new discord_js_1.ButtonBuilder().setStyle(discord_js_1.ButtonStyle.Link).setLabel('📖 Guide complet (PDF)').setURL(GUIDE_URL));
+    return new discord_js_1.ActionRowBuilder().addComponents(new discord_js_1.ButtonBuilder().setStyle(discord_js_1.ButtonStyle.Link).setLabel('📖 Guide complet').setURL(GUIDE_URL));
 }
 /**
  * Fiche détaillée de chaque commande, indexée par son nom (sans le "/").
@@ -325,7 +325,7 @@ exports.help = {
             .setColor(0x5865f2)
             .setTitle('📖 Aide — Commandes YCC')
             .setDescription('Tape `/help commande:<nom>` pour le détail d’une commande. Les Yumz se gagnent en discutant et via `/daily` !\n' +
-            `📖 **Guide complet (PDF)** : ${GUIDE_URL}`)
+            `📖 **Guide complet** : ${GUIDE_URL}`)
             .addFields({ name: '👤 Commandes membres', value: memberList });
         if (isAdmin) {
             embed.addFields({ name: '🛡️ Commandes admin', value: adminList });
