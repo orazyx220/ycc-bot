@@ -10,7 +10,7 @@ const time_1 = require("../utils/time");
 exports.roue = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName('roue')
-        .setDescription('Tourne la roue de la fortune (gratuit, 1×/jour) !'),
+        .setDescription('Tourne la roue de la fortune (gratuit, 1×/semaine) !'),
     async execute(interaction) {
         const res = await (0, wheel_1.spinWheel)(interaction.user.id);
         if (res.status === 'cooldown') {
@@ -21,7 +21,9 @@ exports.roue = {
             return;
         }
         const lines = res.outcomes.map((o) => `${o.emoji} **${o.label}** — ${o.detail}`);
-        const gagne = res.outcomes.some((o) => o.label !== 'Rien...');
+        // Le dernier lot est le lot final (les "tours gratuits" relancent avant).
+        const last = res.outcomes[res.outcomes.length - 1];
+        const gagne = last !== undefined && last.label !== 'Rien...';
         const embed = new discord_js_1.EmbedBuilder()
             .setColor(gagne ? 0x2ecc71 : 0x95a5a6)
             .setTitle('🎡 Roue de la fortune')

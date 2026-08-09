@@ -53,11 +53,11 @@ const DETAILS = {
     },
     roue: {
         name: '/roue', admin: false,
-        short: 'Roue de la fortune (gratuit, 1×/jour).',
-        summary: 'Tourne la roue de la fortune une fois par jour : carte, Yumz, tour gratuit… ou rien !',
+        short: 'Roue de la fortune (gratuit, 1×/semaine).',
+        summary: 'Tourne la roue de la fortune une fois par semaine : petites sommes fréquentes, gros lots très rares (façon loterie).',
         params: [],
         examples: ['/roue'],
-        notes: 'Lots : carte, 5 000 / 50 000 / 100 000 Yumz, tour gratuit, ou rien. Un « tour gratuit » relance aussitôt.',
+        notes: 'Lots : 10/100/500 Yumz (fréquents), carte, tour gratuit, 5 000 / 50 000 / 100 000 Yumz (de plus en plus rares), ou rien.',
     },
     solde: {
         name: '/solde', admin: false,

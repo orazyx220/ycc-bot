@@ -14,7 +14,7 @@ import { formatDuration } from '../utils/time';
 export const roue: Command = {
   data: new SlashCommandBuilder()
     .setName('roue')
-    .setDescription('Tourne la roue de la fortune (gratuit, 1×/jour) !'),
+    .setDescription('Tourne la roue de la fortune (gratuit, 1×/semaine) !'),
 
   async execute(interaction: ChatInputCommandInteraction) {
     const res = await spinWheel(interaction.user.id);
@@ -28,7 +28,9 @@ export const roue: Command = {
     }
 
     const lines = res.outcomes.map((o) => `${o.emoji} **${o.label}** — ${o.detail}`);
-    const gagne = res.outcomes.some((o) => o.label !== 'Rien...');
+    // Le dernier lot est le lot final (les "tours gratuits" relancent avant).
+    const last = res.outcomes[res.outcomes.length - 1];
+    const gagne = last !== undefined && last.label !== 'Rien...';
 
     const embed = new EmbedBuilder()
       .setColor(gagne ? 0x2ecc71 : 0x95a5a6)
