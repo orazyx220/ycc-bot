@@ -41,14 +41,14 @@ Quand tu écris dans certains salons ou avec certains rôles, tes gains sont mul
 
 Chaque carte a une **rareté** (qui définit sa couleur) :
 
-| Rareté | Emoji |
+| Rareté | Couleur |
 |---|---|
-| Commune | ⚪ |
-| Rare | 🔵 |
-| Épique | 🟣 |
-| Légendaire | 🟡 |
-| Mystère | 🎭 |
-| Evil | 😈 |
+| Commune | Gris |
+| Rare | Bleu |
+| Épique | Violet |
+| Légendaire | Or (jaune) |
+| Mystère | Turquoise |
+| Evil | Rouge sombre |
 
 ### Comment obtenir des cartes ?
 - 🛒 **`/boutique`** — achète directement la carte que tu veux avec tes Yumz.
@@ -115,8 +115,8 @@ Mise tes Yumz et tente ta chance ! Mise entre **10** et **10 000** Yumz.
 Ton dé contre celui du bot. Le plus haut gagne (double la mise), égalité = mise remboursée.
 
 ### 🎰 Machine à sous — `/parier machine mise:<X>`
-Trois symboles sont tirés (🍒 🍋 🔔 ⭐ 💎) :
-- **3 identiques = JACKPOT** → gain net = **mise × multiplicateur** du symbole (🍒 ×3 … 💎 ×15)
+Trois symboles sont tirés parmi 5 : **cerise 🍒, citron 🍋, cloche 🔔, étoile ⭐, diamant 💎**.
+- **3 identiques = JACKPOT** → gain net = **mise × multiplicateur** du symbole (cerise ×3, citron ×4, cloche ×5, étoile ×8, diamant ×15)
 - **2 identiques** → mise **remboursée** (±0)
 - **Tout différent** → mise perdue
 
