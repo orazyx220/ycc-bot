@@ -11,6 +11,7 @@ import { inventaire } from './inventaire';
 import { giveYumz } from './give_yumz';
 import { reward } from './reward';
 import { boutique } from './boutique';
+import { ouvrir } from './ouvrir';
 import { reserve } from './reserve';
 import { addcard } from './addcard';
 import { editcard } from './editcard';
@@ -37,6 +38,7 @@ export const commands: Command[] = [
   giveYumz,
   reward,
   boutique,
+  ouvrir,
   reserve,
   addcard,
   editcard,

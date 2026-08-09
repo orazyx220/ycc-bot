@@ -13,6 +13,7 @@ const inventaire_1 = require("./inventaire");
 const give_yumz_1 = require("./give_yumz");
 const reward_1 = require("./reward");
 const boutique_1 = require("./boutique");
+const ouvrir_1 = require("./ouvrir");
 const reserve_1 = require("./reserve");
 const addcard_1 = require("./addcard");
 const editcard_1 = require("./editcard");
@@ -38,6 +39,7 @@ exports.commands = [
     give_yumz_1.giveYumz,
     reward_1.reward,
     boutique_1.boutique,
+    ouvrir_1.ouvrir,
     reserve_1.reserve,
     addcard_1.addcard,
     editcard_1.editcard,

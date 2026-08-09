@@ -82,6 +82,14 @@ const DETAILS: Record<string, Detail> = {
     examples: ['/boutique'],
     notes: 'Navigation et achat réservés à celui qui lance la commande ; expire après 2 min.',
   },
+  ouvrir: {
+    name: '/ouvrir', admin: false,
+    short: 'Ouvre un booster (1000 Yumz) → carte aléatoire.',
+    summary: 'Paie 1000 Yumz pour ouvrir un booster et tirer une carte au hasard selon les probabilités de rareté.',
+    params: [],
+    examples: ['/ouvrir'],
+    notes: 'Taux : Commune 55% · Rare 28% · Épique 12% · Légendaire 4% · Mystère 0,9% · Evil 0,1%. Les tirages ne consomment pas le stock.',
+  },
   inventaire: {
     name: '/inventaire', admin: false,
     short: 'Voir tes cartes (ou celles d’un membre).',
