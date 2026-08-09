@@ -4,8 +4,8 @@ node_modules/
 # Secrets — NE JAMAIS mettre sur GitHub
 .env
 
-# Build TypeScript
-dist/
+# Note : on VERSIONNE volontairement dist/ (le JS compilé) car l'hébergeur
+# gratuit n'a pas assez de RAM pour compiler lui-même.
 
 # Logs
 *.log
