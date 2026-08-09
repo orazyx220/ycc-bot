@@ -33,11 +33,15 @@ const rest = new REST().setToken(token);
 // On transforme chaque commande en format JSON attendu par Discord.
 const body = commands.map((command) => command.data.toJSON());
 
-try {
-  console.log(`⏳ Enregistrement de ${body.length} commande(s) sur le serveur...`);
-  await rest.put(Routes.applicationGuildCommands(clientId, guildId), { body });
-  console.log('✅ Commandes enregistrées ! Elles sont dispo immédiatement sur ton serveur.');
-} catch (error) {
-  console.error('❌ Échec de l’enregistrement des commandes :', error);
-  process.exit(1);
+async function main() {
+  try {
+    console.log(`⏳ Enregistrement de ${body.length} commande(s) sur le serveur...`);
+    await rest.put(Routes.applicationGuildCommands(clientId!, guildId!), { body });
+    console.log('✅ Commandes enregistrées ! Elles sont dispo immédiatement sur ton serveur.');
+  } catch (error) {
+    console.error('❌ Échec de l’enregistrement des commandes :', error);
+    process.exit(1);
+  }
 }
+
+main();
