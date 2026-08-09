@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.commandsByName = exports.commands = void 0;
 const discord_js_1 = require("discord.js");
 const ping_1 = require("./ping");
+const help_1 = require("./help");
 const daily_1 = require("./daily");
 const solde_1 = require("./solde");
 const catalogue_1 = require("./catalogue");
@@ -27,6 +28,7 @@ const classement_1 = require("./classement");
  */
 exports.commands = [
     ping_1.ping,
+    help_1.help,
     daily_1.daily,
     solde_1.solde,
     catalogue_1.catalogue,

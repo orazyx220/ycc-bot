@@ -1,6 +1,7 @@
 import { Collection } from 'discord.js';
 import type { Command } from '../types';
 import { ping } from './ping';
+import { help } from './help';
 import { daily } from './daily';
 import { solde } from './solde';
 import { catalogue } from './catalogue';
@@ -26,6 +27,7 @@ import { classement } from './classement';
  */
 export const commands: Command[] = [
   ping,
+  help,
   daily,
   solde,
   catalogue,

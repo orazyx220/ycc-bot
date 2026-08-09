@@ -6,6 +6,7 @@ const Card_1 = require("../database/models/Card");
 const rarities_1 = require("../config/rarities");
 const cardEmbed_1 = require("../utils/cardEmbed");
 const imageUrl_1 = require("../utils/imageUrl");
+const messages_1 = require("../config/messages");
 /**
  * Transforme un nom en identifiant "slug" : minuscules, sans accents,
  * espaces → tirets. Ex. : "Dragon de Feu" → "dragon-de-feu".
@@ -53,7 +54,7 @@ exports.addcard = {
         .setMaxLength(1000))
         .addStringOption((o) => o
         .setName('lien_image')
-        .setDescription('Lien PERMANENT de l’image (ex: https://i.imgur.com/xxxx.png)')
+        .setDescription('Lien DIRECT .png — upload sur imgur.com puis clic-droit → Copier l’adresse de l’image')
         .setRequired(true))
         .addIntegerOption((o) => o
         .setName('prix')
@@ -87,9 +88,8 @@ exports.addcard = {
         }
         if (!(0, imageUrl_1.isDirectImageUrl)(lienImage)) {
             await interaction.reply({
-                content: '🖼️ Ce lien n’est pas un lien **direct** vers une image (il doit finir par `.png`, `.jpg`, `.gif` ou `.webp`).\n' +
-                    '👉 Sur Imgur : **clic droit sur l’image → « Copier l’adresse de l’image »** (tu obtiendras `https://i.imgur.com/….png`).\n' +
-                    'Le lien `imgur.com/a/…` est la *page*, pas l’image.',
+                content: '🖼️ Ce lien n’est pas un lien **direct** vers une image (il doit finir par `.png`, `.jpg`, `.gif` ou `.webp`).\n\n' +
+                    messages_1.IMGUR_GUIDE,
                 flags: discord_js_1.MessageFlags.Ephemeral,
             });
             return;

@@ -9,6 +9,7 @@ import { Card } from '../database/models/Card';
 import { RARITIES, RARITY_INFO, type Rarity } from '../config/rarities';
 import { buildCardEmbed } from '../utils/cardEmbed';
 import { isValidHttpUrl, isDirectImageUrl } from '../utils/imageUrl';
+import { IMGUR_GUIDE } from '../config/messages';
 
 /**
  * Transforme un nom en identifiant "slug" : minuscules, sans accents,
@@ -66,7 +67,7 @@ export const addcard: Command = {
     .addStringOption((o) =>
       o
         .setName('lien_image')
-        .setDescription('Lien PERMANENT de l’image (ex: https://i.imgur.com/xxxx.png)')
+        .setDescription('Lien DIRECT .png — upload sur imgur.com puis clic-droit → Copier l’adresse de l’image')
         .setRequired(true),
     )
     .addIntegerOption((o) =>
@@ -109,9 +110,8 @@ export const addcard: Command = {
     if (!isDirectImageUrl(lienImage)) {
       await interaction.reply({
         content:
-          '🖼️ Ce lien n’est pas un lien **direct** vers une image (il doit finir par `.png`, `.jpg`, `.gif` ou `.webp`).\n' +
-          '👉 Sur Imgur : **clic droit sur l’image → « Copier l’adresse de l’image »** (tu obtiendras `https://i.imgur.com/….png`).\n' +
-          'Le lien `imgur.com/a/…` est la *page*, pas l’image.',
+          '🖼️ Ce lien n’est pas un lien **direct** vers une image (il doit finir par `.png`, `.jpg`, `.gif` ou `.webp`).\n\n' +
+          IMGUR_GUIDE,
         flags: MessageFlags.Ephemeral,
       });
       return;

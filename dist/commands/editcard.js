@@ -6,6 +6,7 @@ const Card_1 = require("../database/models/Card");
 const rarities_1 = require("../config/rarities");
 const cardEmbed_1 = require("../utils/cardEmbed");
 const imageUrl_1 = require("../utils/imageUrl");
+const messages_1 = require("../config/messages");
 /**
  * /editcard <id> [champs…] — (Admin) modifie une carte existante.
  * Seuls les champs renseignés sont changés. L'ID de la carte ne change jamais
@@ -24,7 +25,7 @@ exports.editcard = {
         .setDescription('Nouvelle rareté')
         .addChoices(...rarities_1.RARITIES.map((r) => ({ name: rarities_1.RARITY_INFO[r].label, value: r }))))
         .addStringOption((o) => o.setName('description').setDescription('Nouvelle description').setMaxLength(1000))
-        .addStringOption((o) => o.setName('lien_image').setDescription('Nouveau lien direct de l’image (…/xxx.png)'))
+        .addStringOption((o) => o.setName('lien_image').setDescription('Nouveau lien direct .png (voir /help pour la méthode Imgur)'))
         .addIntegerOption((o) => o.setName('prix').setDescription('Nouveau prix en Yumz').setMinValue(0))
         .addIntegerOption((o) => o
         .setName('restock')
@@ -68,8 +69,8 @@ exports.editcard = {
             const url = lienImage.trim();
             if (!(0, imageUrl_1.isValidHttpUrl)(url) || !(0, imageUrl_1.isDirectImageUrl)(url)) {
                 await interaction.reply({
-                    content: '🖼️ Le `lien_image` doit être un lien **direct** vers une image (…/xxx.png).\n' +
-                        '👉 Sur Imgur : clic droit sur l’image → « Copier l’adresse de l’image ».',
+                    content: '🖼️ Le `lien_image` doit être un lien **direct** vers une image (…/xxx.png).\n\n' +
+                        messages_1.IMGUR_GUIDE,
                     flags: discord_js_1.MessageFlags.Ephemeral,
                 });
                 return;

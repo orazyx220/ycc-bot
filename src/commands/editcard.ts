@@ -9,6 +9,7 @@ import { Card } from '../database/models/Card';
 import { RARITIES, RARITY_INFO, type Rarity } from '../config/rarities';
 import { buildCardEmbed } from '../utils/cardEmbed';
 import { isValidHttpUrl, isDirectImageUrl } from '../utils/imageUrl';
+import { IMGUR_GUIDE } from '../config/messages';
 
 /**
  * /editcard <id> [champs…] — (Admin) modifie une carte existante.
@@ -37,7 +38,7 @@ export const editcard: Command = {
       o.setName('description').setDescription('Nouvelle description').setMaxLength(1000),
     )
     .addStringOption((o) =>
-      o.setName('lien_image').setDescription('Nouveau lien direct de l’image (…/xxx.png)'),
+      o.setName('lien_image').setDescription('Nouveau lien direct .png (voir /help pour la méthode Imgur)'),
     )
     .addIntegerOption((o) =>
       o.setName('prix').setDescription('Nouveau prix en Yumz').setMinValue(0),
@@ -94,8 +95,8 @@ export const editcard: Command = {
       if (!isValidHttpUrl(url) || !isDirectImageUrl(url)) {
         await interaction.reply({
           content:
-            '🖼️ Le `lien_image` doit être un lien **direct** vers une image (…/xxx.png).\n' +
-            '👉 Sur Imgur : clic droit sur l’image → « Copier l’adresse de l’image ».',
+            '🖼️ Le `lien_image` doit être un lien **direct** vers une image (…/xxx.png).\n\n' +
+            IMGUR_GUIDE,
           flags: MessageFlags.Ephemeral,
         });
         return;
