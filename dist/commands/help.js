@@ -158,6 +158,17 @@ const DETAILS = {
         ],
         examples: ['/give_yumz membre:@Ami montant:1000', '/give_yumz membre:@Ami montant:-500 raison:erreur'],
     },
+    give_all: {
+        name: '/give_all', admin: true,
+        short: 'Donne des Yumz à TOUS les membres.',
+        summary: 'Donne un montant de Yumz à tous les membres du serveur (bots exclus). Une confirmation est demandée.',
+        params: [
+            { name: 'montant', desc: 'Yumz à donner à chaque membre', required: true },
+            { name: 'raison', desc: 'Raison (facultatif)', required: false },
+        ],
+        examples: ['/give_all montant:10000'],
+        notes: 'Action massive : à utiliser avec précaution (ex. cadeau d’ouverture). Lancer deux fois cumule les dons.',
+    },
     reward: {
         name: '/reward', admin: true,
         short: 'Récompenses du barème (bump/boost/voice/level).',
