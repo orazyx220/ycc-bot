@@ -1,6 +1,9 @@
 import {
   SlashCommandBuilder,
   EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
   PermissionFlagsBits,
   MessageFlags,
   type ChatInputCommandInteraction,
@@ -8,6 +11,16 @@ import {
 } from 'discord.js';
 import type { Command } from '../types';
 import { IMGUR_GUIDE } from '../config/messages';
+
+/** Lien vers le guide complet (PDF hébergé sur le dépôt GitHub public). */
+const GUIDE_URL = 'https://github.com/orazyx220/ycc-bot/blob/main/GUIDE.pdf';
+
+/** Bouton-lien « Guide complet » ajouté aux réponses de /help. */
+function guideRow(): ActionRowBuilder<ButtonBuilder> {
+  return new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('📖 Guide complet (PDF)').setURL(GUIDE_URL),
+  );
+}
 
 interface Param {
   name: string;
@@ -341,7 +354,11 @@ export const help: Command = {
         await interaction.reply({ content: '❓ Commande inconnue.', flags: MessageFlags.Ephemeral });
         return;
       }
-      await interaction.reply({ embeds: [buildDetailEmbed(detail)], flags: MessageFlags.Ephemeral });
+      await interaction.reply({
+        embeds: [buildDetailEmbed(detail)],
+        components: [guideRow()],
+        flags: MessageFlags.Ephemeral,
+      });
       return;
     }
 
@@ -352,7 +369,10 @@ export const help: Command = {
     const embed = new EmbedBuilder()
       .setColor(0x5865f2)
       .setTitle('📖 Aide — Commandes YCC')
-      .setDescription('Tape `/help commande:<nom>` pour le détail d’une commande. Les Yumz se gagnent en discutant et via `/daily` !')
+      .setDescription(
+        'Tape `/help commande:<nom>` pour le détail d’une commande. Les Yumz se gagnent en discutant et via `/daily` !\n' +
+          `📖 **Guide complet (PDF)** : ${GUIDE_URL}`,
+      )
       .addFields({ name: '👤 Commandes membres', value: memberList });
 
     if (isAdmin) {
@@ -361,6 +381,6 @@ export const help: Command = {
       embed.setFooter({ text: 'Des commandes admin existent aussi (réservées aux administrateurs).' });
     }
 
-    await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
+    await interaction.reply({ embeds: [embed], components: [guideRow()], flags: MessageFlags.Ephemeral });
   },
 };
