@@ -169,6 +169,14 @@ const DETAILS = {
         examples: ['/give_all montant:10000'],
         notes: 'Action massive : à utiliser avec précaution (ex. cadeau d’ouverture). Lancer deux fois cumule les dons.',
     },
+    reset: {
+        name: '/reset', admin: true,
+        short: 'Remet à zéro l’économie (⚠️ irréversible).',
+        summary: 'Remet à zéro une partie ou tout : soldes, inventaires, cooldowns, stock des cartes, journal. Confirmation demandée.',
+        params: [{ name: 'cible', desc: 'Ce qu’on remet à zéro (dont « TOUT » pour le lancement)', required: true }],
+        examples: ['/reset cible:tout', '/reset cible:soldes'],
+        notes: '🛑 Irréversible ! Pensé pour repartir propre le jour du lancement.',
+    },
     reward: {
         name: '/reward', admin: true,
         short: 'Récompenses du barème (bump/boost/voice/level).',

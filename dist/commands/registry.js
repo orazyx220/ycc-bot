@@ -12,6 +12,7 @@ const drop_1 = require("./drop");
 const inventaire_1 = require("./inventaire");
 const give_yumz_1 = require("./give_yumz");
 const give_all_1 = require("./give_all");
+const reset_1 = require("./reset");
 const reward_1 = require("./reward");
 const boutique_1 = require("./boutique");
 const ouvrir_1 = require("./ouvrir");
@@ -42,6 +43,7 @@ exports.commands = [
     inventaire_1.inventaire,
     give_yumz_1.giveYumz,
     give_all_1.giveAll,
+    reset_1.reset,
     reward_1.reward,
     boutique_1.boutique,
     ouvrir_1.ouvrir,

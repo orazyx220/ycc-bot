@@ -10,6 +10,7 @@ import { drop } from './drop';
 import { inventaire } from './inventaire';
 import { giveYumz } from './give_yumz';
 import { giveAll } from './give_all';
+import { reset } from './reset';
 import { reward } from './reward';
 import { boutique } from './boutique';
 import { ouvrir } from './ouvrir';
@@ -41,6 +42,7 @@ export const commands: Command[] = [
   inventaire,
   giveYumz,
   giveAll,
+  reset,
   reward,
   boutique,
   ouvrir,
