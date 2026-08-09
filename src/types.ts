@@ -1,4 +1,5 @@
 import type {
+  AutocompleteInteraction,
   ChatInputCommandInteraction,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
@@ -20,4 +21,6 @@ export interface Command {
     | SlashCommandOptionsOnlyBuilder
     | SlashCommandSubcommandsOnlyBuilder;
   execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
+  /** Optionnel : réponses d'autocomplétion (liste dynamique selon l'utilisateur). */
+  autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;
 }

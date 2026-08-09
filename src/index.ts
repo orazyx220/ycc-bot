@@ -49,6 +49,19 @@ client.on(Events.MessageCreate, async (message) => {
 
 // --- 4) Événement : une interaction arrive (commande slash OU bouton) ---
 client.on(Events.InteractionCreate, async (interaction) => {
+  // 4z) Autocomplétion (suggestions dynamiques d'une option, ex: /help)
+  if (interaction.isAutocomplete()) {
+    const command = commandsByName.get(interaction.commandName);
+    if (command?.autocomplete) {
+      try {
+        await command.autocomplete(interaction);
+      } catch (error) {
+        console.error(`Erreur autocomplétion /${interaction.commandName} :`, error);
+      }
+    }
+    return;
+  }
+
   // 4a) Boutons "Acheter" et "Récupérer" (drops). Les boutons de pagination
   // (◀ / ▶) et de boutique (shop_*) sont gérés par leurs propres collectors,
   // donc on les laisse passer ici.

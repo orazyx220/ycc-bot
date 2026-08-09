@@ -227,22 +227,30 @@ exports.help = {
         .addStringOption((o) => o
         .setName('commande')
         .setDescription('Voir le détail d’une commande précise')
-        .addChoices(...ORDER.map((key) => ({ name: DETAILS[key].name, value: key })))),
+        .setAutocomplete(true)),
+    // Suggestions dynamiques : on masque les commandes admin aux non-admins.
+    async autocomplete(interaction) {
+        const isAdmin = interaction.memberPermissions?.has(discord_js_1.PermissionFlagsBits.Administrator) ?? false;
+        const focused = interaction.options.getFocused().toLowerCase();
+        const results = ORDER.filter((k) => isAdmin || !DETAILS[k].admin)
+            .filter((k) => DETAILS[k].name.toLowerCase().includes(focused) || k.includes(focused))
+            .slice(0, 25)
+            .map((k) => ({ name: DETAILS[k].name, value: k }));
+        await interaction.respond(results);
+    },
     async execute(interaction) {
         const isAdmin = interaction.memberPermissions?.has(discord_js_1.PermissionFlagsBits.Administrator) ?? false;
         // --- Détail d'une commande précise ---
         const key = interaction.options.getString('commande');
         if (key) {
             const detail = DETAILS[key];
-            if (!detail) {
+            // Commande inexistante, OU commande admin demandée par un non-admin
+            // → on la traite comme inconnue (on ne révèle pas son existence).
+            if (!detail || (detail.admin && !isAdmin)) {
                 await interaction.reply({ content: '❓ Commande inconnue.', flags: discord_js_1.MessageFlags.Ephemeral });
                 return;
             }
-            const embed = buildDetailEmbed(detail);
-            if (detail.admin && !isAdmin) {
-                embed.addFields({ name: '🔒 Accès', value: 'Cette commande est réservée aux administrateurs.' });
-            }
-            await interaction.reply({ embeds: [embed], flags: discord_js_1.MessageFlags.Ephemeral });
+            await interaction.reply({ embeds: [buildDetailEmbed(detail)], flags: discord_js_1.MessageFlags.Ephemeral });
             return;
         }
         // --- Liste générale ---
