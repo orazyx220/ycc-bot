@@ -7,6 +7,7 @@ const connect_1 = require("./database/connect");
 const buyButton_1 = require("./interactions/buyButton");
 const giftButton_1 = require("./interactions/giftButton");
 const messageEarn_1 = require("./events/messageEarn");
+const bumpDetect_1 = require("./events/bumpDetect");
 const autoDrop_1 = require("./services/autoDrop");
 // --- 1) On vérifie que le token est bien présent AVANT de démarrer ---
 const token = process.env.DISCORD_TOKEN;
@@ -41,6 +42,12 @@ client.on(discord_js_1.Events.MessageCreate, async (message) => {
     }
     catch (error) {
         console.error('Erreur lors du gain de Yumz par message :', error);
+    }
+    try {
+        await (0, bumpDetect_1.handleDisboardBump)(message);
+    }
+    catch (error) {
+        console.error('Erreur lors de la détection de bump :', error);
     }
 });
 // --- 4) Événement : une interaction arrive (commande slash OU bouton) ---

@@ -2,13 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.reward = void 0;
 const discord_js_1 = require("discord.js");
-const User_1 = require("../database/models/User");
 const economy_1 = require("../services/economy");
+const bump_1 = require("../services/bump");
 const rewards_1 = require("../config/rewards");
-/** Date du jour au format 'AAAA-MM-JJ' (UTC), pour le compteur de bumps. */
-function todayKey() {
-    return new Date().toISOString().slice(0, 10);
-}
 /**
  * /reward — (Admin) attribue une récompense en appliquant automatiquement
  * le barème des Yumz. Sous-commandes :
@@ -74,10 +70,8 @@ exports.reward = {
         }
         // --- Cas particulier : le bump est limité à 3 par jour ---
         if (sub === 'bump') {
-            const today = todayKey();
-            const user = await (0, User_1.getOrCreateUser)(target.id);
-            const dejaFait = user.bumpCountDate === today ? user.bumpCountToday : 0;
-            if (dejaFait >= rewards_1.REWARDS.bumpMaxPerDay) {
+            const res = await (0, bump_1.giveBumpReward)(target.id);
+            if (res.status === 'limit') {
                 await interaction.reply({
                     content: `⛔ <@${target.id}> a déjà atteint la limite de **${rewards_1.REWARDS.bumpMaxPerDay} bumps** aujourd’hui.`,
                     flags: discord_js_1.MessageFlags.Ephemeral,
@@ -85,10 +79,8 @@ exports.reward = {
                 });
                 return;
             }
-            await User_1.User.updateOne({ discordId: target.id }, { $set: { bumpCountDate: today, bumpCountToday: dejaFait + 1 } });
-            const solde = await (0, economy_1.grantYumz)(target.id, rewards_1.REWARDS.bump, 'bump');
             await interaction.reply({
-                content: `📈 Bump **${dejaFait + 1}/${rewards_1.REWARDS.bumpMaxPerDay}** : **+${rewards_1.REWARDS.bump} Yumz** pour <@${target.id}>. Solde : **${solde}**.`,
+                content: `📈 Bump **${res.count}/${rewards_1.REWARDS.bumpMaxPerDay}** : **+${rewards_1.REWARDS.bump} Yumz** pour <@${target.id}>. Solde : **${res.newBalance}**.`,
                 allowedMentions: { users: [] },
             });
             return;

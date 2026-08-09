@@ -14,6 +14,9 @@ const give_yumz_1 = require("./give_yumz");
 const reward_1 = require("./reward");
 const boutique_1 = require("./boutique");
 const ouvrir_1 = require("./ouvrir");
+const parier_1 = require("./parier");
+const travailler_1 = require("./travailler");
+const roue_1 = require("./roue");
 const reserve_1 = require("./reserve");
 const addcard_1 = require("./addcard");
 const editcard_1 = require("./editcard");
@@ -40,6 +43,9 @@ exports.commands = [
     reward_1.reward,
     boutique_1.boutique,
     ouvrir_1.ouvrir,
+    parier_1.parier,
+    travailler_1.travailler,
+    roue_1.roue,
     reserve_1.reserve,
     addcard_1.addcard,
     editcard_1.editcard,

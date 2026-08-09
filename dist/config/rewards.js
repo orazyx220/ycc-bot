@@ -7,8 +7,12 @@ exports.levelReward = levelReward;
  * On modifie un montant ICI et il change partout dans le bot.
  */
 exports.REWARDS = {
-    /** /daily — une fois par 24 h */
+    /** /daily — une fois par 24 h (montant de base) */
     daily: 550,
+    /** Bonus ajouté par jour consécutif de /daily */
+    dailyStreakBonus: 10,
+    /** Plafond du gain quotidien (base + bonus de streak) */
+    dailyMax: 1000,
     /** Bump — max 3 fois par jour */
     bump: 500,
     bumpMaxPerDay: 3,

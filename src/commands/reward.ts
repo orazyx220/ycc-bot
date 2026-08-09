@@ -5,14 +5,9 @@ import {
   type ChatInputCommandInteraction,
 } from 'discord.js';
 import type { Command } from '../types';
-import { User, getOrCreateUser } from '../database/models/User';
 import { grantYumz } from '../services/economy';
+import { giveBumpReward } from '../services/bump';
 import { REWARDS, levelReward } from '../config/rewards';
-
-/** Date du jour au format 'AAAA-MM-JJ' (UTC), pour le compteur de bumps. */
-function todayKey(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 /**
  * /reward — (Admin) attribue une récompense en appliquant automatiquement
@@ -93,11 +88,8 @@ export const reward: Command = {
 
     // --- Cas particulier : le bump est limité à 3 par jour ---
     if (sub === 'bump') {
-      const today = todayKey();
-      const user = await getOrCreateUser(target.id);
-      const dejaFait = user.bumpCountDate === today ? user.bumpCountToday : 0;
-
-      if (dejaFait >= REWARDS.bumpMaxPerDay) {
+      const res = await giveBumpReward(target.id);
+      if (res.status === 'limit') {
         await interaction.reply({
           content: `⛔ <@${target.id}> a déjà atteint la limite de **${REWARDS.bumpMaxPerDay} bumps** aujourd’hui.`,
           flags: MessageFlags.Ephemeral,
@@ -105,14 +97,8 @@ export const reward: Command = {
         });
         return;
       }
-
-      await User.updateOne(
-        { discordId: target.id },
-        { $set: { bumpCountDate: today, bumpCountToday: dejaFait + 1 } },
-      );
-      const solde = await grantYumz(target.id, REWARDS.bump, 'bump');
       await interaction.reply({
-        content: `📈 Bump **${dejaFait + 1}/${REWARDS.bumpMaxPerDay}** : **+${REWARDS.bump} Yumz** pour <@${target.id}>. Solde : **${solde}**.`,
+        content: `📈 Bump **${res.count}/${REWARDS.bumpMaxPerDay}** : **+${REWARDS.bump} Yumz** pour <@${target.id}>. Solde : **${res.newBalance}**.`,
         allowedMentions: { users: [] },
       });
       return;

@@ -12,6 +12,9 @@ import { giveYumz } from './give_yumz';
 import { reward } from './reward';
 import { boutique } from './boutique';
 import { ouvrir } from './ouvrir';
+import { parier } from './parier';
+import { travailler } from './travailler';
+import { roue } from './roue';
 import { reserve } from './reserve';
 import { addcard } from './addcard';
 import { editcard } from './editcard';
@@ -39,6 +42,9 @@ export const commands: Command[] = [
   reward,
   boutique,
   ouvrir,
+  parier,
+  travailler,
+  roue,
   reserve,
   addcard,
   editcard,

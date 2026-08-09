@@ -1,0 +1,39 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.handleDisboardBump = handleDisboardBump;
+const bump_1 = require("../services/bump");
+const rewards_1 = require("../config/rewards");
+/** ID du bot Disboard (celui qui confirme les bumps). */
+const DISBOARD_BOT_ID = '302050872383242240';
+/**
+ * Détecte un bump Disboard réussi et crédite automatiquement l'auteur du bump
+ * (dans la limite de 3/jour). On reconnaît le succès via l'embed de confirmation.
+ */
+async function handleDisboardBump(message) {
+    if (message.author.id !== DISBOARD_BOT_ID)
+        return;
+    if (!message.inGuild())
+        return;
+    const embed = message.embeds[0];
+    if (!embed)
+        return;
+    // Message de succès Disboard (EN "Bump done!" / FR "Bump effectué" / 👍).
+    const desc = (embed.description ?? '').toLowerCase();
+    const isSuccess = desc.includes('bump done') ||
+        desc.includes('bump effectu') ||
+        desc.includes('👍') ||
+        desc.includes(':thumbsup:');
+    if (!isSuccess)
+        return;
+    // Qui a lancé /bump ? (métadonnées de l'interaction slash de Disboard)
+    const bumper = message.interactionMetadata?.user;
+    if (!bumper || bumper.bot)
+        return;
+    const res = await (0, bump_1.giveBumpReward)(bumper.id);
+    if (res.status === 'ok') {
+        await message.channel
+            .send(`🎉 Merci <@${bumper.id}> pour le bump ! **+${rewards_1.REWARDS.bump} Yumz** ` +
+            `(${res.count}/${rewards_1.REWARDS.bumpMaxPerDay} aujourd’hui).`)
+            .catch(() => { });
+    }
+}

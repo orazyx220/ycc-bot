@@ -16,9 +16,14 @@ const userSchema = new mongoose_1.Schema({
     cards: { type: [String], required: true, default: [] },
     // Dernière fois que le membre a fait /daily (null = jamais).
     dailyLastClaim: { type: Date, default: null },
+    // Nombre de jours consécutifs de /daily (pour le bonus de streak).
+    dailyStreak: { type: Number, required: true, default: 0 },
     // Compteur de bumps du jour + la date associée (pour le remettre à 0 chaque jour).
     bumpCountToday: { type: Number, required: true, default: 0 },
     bumpCountDate: { type: String, default: null }, // format 'AAAA-MM-JJ'
+    // Cooldowns de /travailler et de la roue (null = jamais utilisé).
+    workLastClaim: { type: Date, default: null },
+    wheelLastSpin: { type: Date, default: null },
 }, { timestamps: true });
 exports.User = (0, mongoose_1.model)('User', userSchema);
 /**

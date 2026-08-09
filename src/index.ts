@@ -5,6 +5,7 @@ import { connectDatabase } from './database/connect';
 import { isBuyButton, handleBuyButton } from './interactions/buyButton';
 import { isGiftButton, handleGiftButton } from './interactions/giftButton';
 import { handleMessageForYumz } from './events/messageEarn';
+import { handleDisboardBump } from './events/bumpDetect';
 import { startAutoDrops } from './services/autoDrop';
 
 // --- 1) On vérifie que le token est bien présent AVANT de démarrer ---
@@ -44,6 +45,11 @@ client.on(Events.MessageCreate, async (message) => {
     await handleMessageForYumz(message);
   } catch (error) {
     console.error('Erreur lors du gain de Yumz par message :', error);
+  }
+  try {
+    await handleDisboardBump(message);
+  } catch (error) {
+    console.error('Erreur lors de la détection de bump :', error);
   }
 });
 
