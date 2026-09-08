@@ -64,12 +64,12 @@ export async function browseCards(
         .setCustomId('cb_prev')
         .setLabel('◀')
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(frozen || index === 0),
+        .setDisabled(frozen || page === 0),
       new ButtonBuilder()
         .setCustomId('cb_next')
         .setLabel('▶')
         .setStyle(ButtonStyle.Secondary)
-        .setDisabled(frozen || index === total - 1),
+        .setDisabled(frozen || page === totalPages - 1),
     ];
     if (buy) {
       navButtons.splice(
@@ -109,12 +109,16 @@ export async function browseCards(
 
     if (i.isButton()) {
       if (i.customId === 'cb_prev') {
-        index = Math.max(0, index - 1);
+        // On recule d'un LOT de 25 (et on sélectionne la 1re carte du lot).
+        const p = Math.max(0, Math.floor(index / PAGE) - 1);
+        index = p * PAGE;
         await i.update(render());
         return;
       }
       if (i.customId === 'cb_next') {
-        index = Math.min(total - 1, index + 1);
+        // On avance d'un LOT de 25.
+        const p = Math.min(totalPages - 1, Math.floor(index / PAGE) + 1);
+        index = p * PAGE;
         await i.update(render());
         return;
       }
