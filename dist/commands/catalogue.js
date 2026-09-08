@@ -4,16 +4,15 @@ exports.catalogue = void 0;
 const discord_js_1 = require("discord.js");
 const Card_1 = require("../database/models/Card");
 const rarities_1 = require("../config/rarities");
-const cardEmbed_1 = require("../utils/cardEmbed");
-const pagination_1 = require("../utils/pagination");
+const cardBrowser_1 = require("../utils/cardBrowser");
 /**
- * /catalogue — feuillette les cartes une par une (image en grand), avec les
- * boutons ◀ / ▶ et un bouton 🔍 pour rechercher une carte par nom/ID.
+ * /catalogue — parcourt les cartes : un menu déroulant pour choisir une carte
+ * directement + les boutons ◀ / ▶ pour changer de page.
  */
 exports.catalogue = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName('catalogue')
-        .setDescription('Feuillette les cartes de la collection (avec recherche 🔍).'),
+        .setDescription('Parcours les cartes de la collection (menu déroulant).'),
     async execute(interaction) {
         const rarityRank = new Map(rarities_1.RARITIES.map((r, i) => [r, i]));
         const cards = await Card_1.Card.find();
@@ -27,11 +26,6 @@ exports.catalogue = {
             });
             return;
         }
-        const pages = cards.map((card, i) => (0, cardEmbed_1.buildCardEmbed)(card).setFooter({
-            text: `ID : ${card.cardId}  •  Page ${i + 1}/${cards.length}`,
-        }));
-        // Texte cherchable par carte : nom + ID + libellé de rareté.
-        const searchKeys = cards.map((c) => `${c.name} ${c.cardId} ${(0, rarities_1.rarityInfo)(c.rarity).label}`);
-        await (0, pagination_1.paginateEmbeds)(interaction, pages, { searchKeys });
+        await (0, cardBrowser_1.browseCards)(interaction, cards);
     },
 };

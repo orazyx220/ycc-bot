@@ -1,18 +1,17 @@
 import { SlashCommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
 import type { Command } from '../types';
 import { Card } from '../database/models/Card';
-import { RARITIES, rarityInfo } from '../config/rarities';
-import { buildCardEmbed } from '../utils/cardEmbed';
-import { paginateEmbeds } from '../utils/pagination';
+import { RARITIES } from '../config/rarities';
+import { browseCards } from '../utils/cardBrowser';
 
 /**
- * /catalogue — feuillette les cartes une par une (image en grand), avec les
- * boutons ◀ / ▶ et un bouton 🔍 pour rechercher une carte par nom/ID.
+ * /catalogue — parcourt les cartes : un menu déroulant pour choisir une carte
+ * directement + les boutons ◀ / ▶ pour changer de page.
  */
 export const catalogue: Command = {
   data: new SlashCommandBuilder()
     .setName('catalogue')
-    .setDescription('Feuillette les cartes de la collection (avec recherche 🔍).'),
+    .setDescription('Parcours les cartes de la collection (menu déroulant).'),
 
   async execute(interaction: ChatInputCommandInteraction) {
     const rarityRank = new Map(RARITIES.map((r, i) => [r, i]));
@@ -29,14 +28,6 @@ export const catalogue: Command = {
       return;
     }
 
-    const pages = cards.map((card, i) =>
-      buildCardEmbed(card).setFooter({
-        text: `ID : ${card.cardId}  •  Page ${i + 1}/${cards.length}`,
-      }),
-    );
-    // Texte cherchable par carte : nom + ID + libellé de rareté.
-    const searchKeys = cards.map((c) => `${c.name} ${c.cardId} ${rarityInfo(c.rarity).label}`);
-
-    await paginateEmbeds(interaction, pages, { searchKeys });
+    await browseCards(interaction, cards);
   },
 };

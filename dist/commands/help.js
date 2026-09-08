@@ -74,11 +74,11 @@ const DETAILS = {
     },
     catalogue: {
         name: '/catalogue', admin: false,
-        short: 'Feuillette les cartes (recherche 🔍).',
-        summary: 'Feuillette les cartes, une par une (image en grand), avec les boutons ◀ / ▶.',
+        short: 'Parcours les cartes (menu déroulant).',
+        summary: 'Parcours les cartes avec un menu déroulant pour choisir directement, et les boutons ◀ / ▶.',
         params: [],
         examples: ['/catalogue'],
-        notes: 'Un bouton 🔍 ouvre une fenêtre de recherche pour sauter à une carte par nom/ID. Triées de la plus rare à la plus commune.',
+        notes: 'Un menu déroulant liste les cartes (25 par page) pour sauter à celle voulue. Triées de la plus rare à la plus commune.',
     },
     carte: {
         name: '/carte', admin: false,
@@ -89,11 +89,11 @@ const DETAILS = {
     },
     boutique: {
         name: '/boutique', admin: false,
-        short: 'Achète des cartes (recherche 🔍).',
-        summary: 'Feuillette les cartes en stock et achète celle affichée avec le bouton 🛒 Acheter.',
+        short: 'Achète des cartes (menu déroulant).',
+        summary: 'Choisis une carte dans le menu déroulant et achète-la avec le bouton 🛒 Acheter.',
         params: [],
         examples: ['/boutique'],
-        notes: 'Un bouton 🔍 ouvre une fenêtre de recherche (nom/ID). Réservé à celui qui lance la commande ; expire après 2 min.',
+        notes: 'Menu déroulant pour choisir la carte (25 par page). Réservé à celui qui lance la commande ; expire après 2 min.',
     },
     ouvrir: {
         name: '/ouvrir', admin: false,
