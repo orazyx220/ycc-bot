@@ -22,6 +22,7 @@ import { addcard } from './addcard';
 import { editcard } from './editcard';
 import { delcard } from './delcard';
 import { givecard } from './givecard';
+import { takecard } from './takecard';
 import { donner } from './donner';
 import { echange } from './echange';
 import { classement } from './classement';
@@ -54,6 +55,7 @@ export const commands: Command[] = [
   editcard,
   delcard,
   givecard,
+  takecard,
   donner,
   echange,
   classement,

@@ -24,6 +24,7 @@ const addcard_1 = require("./addcard");
 const editcard_1 = require("./editcard");
 const delcard_1 = require("./delcard");
 const givecard_1 = require("./givecard");
+const takecard_1 = require("./takecard");
 const donner_1 = require("./donner");
 const echange_1 = require("./echange");
 const classement_1 = require("./classement");
@@ -55,6 +56,7 @@ exports.commands = [
     editcard_1.editcard,
     delcard_1.delcard,
     givecard_1.givecard,
+    takecard_1.takecard,
     donner_1.donner,
     echange_1.echange,
     classement_1.classement,

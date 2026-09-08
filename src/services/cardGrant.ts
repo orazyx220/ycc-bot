@@ -57,3 +57,37 @@ export async function transferCard(
 
   return { status: 'ok', card: meta };
 }
+
+/** Résultat d'un retrait de carte à un membre. */
+export type TakeResult =
+  | { status: 'ok'; card: CardDoc | null; restocked: boolean }
+  | { status: 'notowned' };
+
+/**
+ * (Admin) Retire UN exemplaire d'une carte de l'inventaire d'un membre.
+ * Si `restock` est vrai, l'exemplaire est remis dans le stock global
+ * (remainingSupply +1, plafonné à maxSupply) — utile pour une carte limitée.
+ */
+export async function takeCard(
+  discordId: string,
+  cardId: string,
+  restock: boolean,
+): Promise<TakeResult> {
+  const user = await getOrCreateUser(discordId);
+  const index = user.cards.indexOf(cardId);
+  if (index === -1) return { status: 'notowned' };
+
+  user.cards.splice(index, 1);
+  await user.save();
+
+  const card = await Card.findOne({ cardId });
+  let restocked = false;
+  if (restock && card && card.remainingSupply < card.maxSupply) {
+    card.remainingSupply += 1;
+    await card.save();
+    restocked = true;
+  }
+
+  await Transaction.create({ discordId, type: 'admin_take', amount: 0, cardId });
+  return { status: 'ok', card, restocked };
+}

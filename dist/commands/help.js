@@ -241,6 +241,17 @@ const DETAILS = {
         ],
         examples: ['/givecard membre:@Ami id:dragon-epique', '/givecard membre:@Ami id:ycc-originel bonus:true'],
     },
+    takecard: {
+        name: '/takecard', admin: true,
+        short: 'Retire une carte à un membre.',
+        summary: 'Retire un exemplaire d’une carte de l’inventaire d’un membre. Par défaut, l’exemplaire est remis dans le stock global.',
+        params: [
+            { name: 'membre', desc: 'Le membre concerné', required: true },
+            { name: 'id', desc: 'L’identifiant de la carte à retirer', required: true },
+            { name: 'rendre_au_stock', desc: 'Remettre l’exemplaire en stock (défaut : oui)', required: false },
+        ],
+        examples: ['/takecard membre:@Ami id:dragon-epique', '/takecard membre:@Ami id:dragon-epique rendre_au_stock:false'],
+    },
     reserve: {
         name: '/reserve', admin: true,
         short: 'Gère la réserve des drops automatiques.',
