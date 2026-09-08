@@ -4,71 +4,45 @@ import {
   ButtonBuilder,
   ButtonStyle,
   ComponentType,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
   MessageFlags,
   type ChatInputCommandInteraction,
-  type AutocompleteInteraction,
 } from 'discord.js';
 import type { Command } from '../types';
 import { Card } from '../database/models/Card';
-import { RARITIES, RARITY_INFO } from '../config/rarities';
+import { RARITIES } from '../config/rarities';
 import { buildCardEmbed } from '../utils/cardEmbed';
 import { purchaseCard } from '../services/purchase';
 import { lockedMessage } from '../utils/requirements';
-import { matchesSearch, respondCardAutocomplete } from '../utils/cardSearch';
 
 /**
- * /boutique [recherche] [rarete] — feuillette les cartes en stock et achète
- * celle affichée avec le bouton « 🛒 Acheter ». Options pour filtrer par nom/rareté.
- * Navigation et achat réservés à l'auteur de la commande.
+ * /boutique — feuillette les cartes en stock et achète celle affichée avec le
+ * bouton « 🛒 Acheter ». Un bouton 🔍 ouvre une fenêtre de recherche pour sauter
+ * à une carte par nom/ID. Navigation, achat et recherche réservés à l'auteur.
  */
 export const boutique: Command = {
   data: new SlashCommandBuilder()
     .setName('boutique')
-    .setDescription('Achète des cartes avec tes Yumz (avec recherche).')
-    .addStringOption((o) =>
-      o.setName('recherche').setDescription('Filtrer par nom ou ID de carte').setAutocomplete(true),
-    )
-    .addStringOption((o) =>
-      o
-        .setName('rarete')
-        .setDescription('Filtrer par rareté')
-        .addChoices(...RARITIES.map((r) => ({ name: RARITY_INFO[r].label, value: r }))),
-    ),
-
-  async autocomplete(interaction: AutocompleteInteraction) {
-    await respondCardAutocomplete(interaction, true);
-  },
+    .setDescription('Achète des cartes avec tes Yumz (recherche 🔍 intégrée).'),
 
   async execute(interaction: ChatInputCommandInteraction) {
-    const recherche = interaction.options.getString('recherche') ?? '';
-    const rarete = interaction.options.getString('rarete');
-
     const rank = new Map(RARITIES.map((r, i) => [r, i]));
-    let cards = await Card.find({ remainingSupply: { $gt: 0 } });
-
-    if (recherche) cards = cards.filter((c) => matchesSearch(c, recherche));
-    if (rarete) cards = cards.filter((c) => c.rarity === rarete);
-
+    const cards = await Card.find({ remainingSupply: { $gt: 0 } });
     cards.sort(
-      (a, b) =>
-        (rank.get(b.rarity) ?? 0) - (rank.get(a.rarity) ?? 0) || b.price - a.price,
+      (a, b) => (rank.get(b.rarity) ?? 0) - (rank.get(a.rarity) ?? 0) || b.price - a.price,
     );
 
     if (cards.length === 0) {
-      const filtre = recherche || rarete;
-      await interaction.reply({
-        content: filtre
-          ? '🔍 Aucune carte en stock ne correspond à ta recherche.'
-          : '🛒 La boutique est vide pour l’instant.',
-        flags: MessageFlags.Ephemeral,
-      });
+      await interaction.reply({ content: '🛒 La boutique est vide pour l’instant.' });
       return;
     }
 
     let index = 0;
     const total = cards.length;
 
-    // Construit l'affichage de la carte courante + les 3 boutons.
+    // Construit l'affichage de la carte courante + les boutons.
     const render = (frozen = false) => {
       const card = cards[index]!;
       const soldOut = card.remainingSupply <= 0;
@@ -81,6 +55,11 @@ export const boutique: Command = {
           .setLabel('◀')
           .setStyle(ButtonStyle.Secondary)
           .setDisabled(frozen || index === 0),
+        new ButtonBuilder()
+          .setCustomId('shop_search')
+          .setEmoji('🔍')
+          .setStyle(ButtonStyle.Primary)
+          .setDisabled(frozen),
         new ButtonBuilder()
           .setCustomId('shop_buy')
           .setLabel(soldOut ? 'Épuisée' : `🛒 Acheter (${card.price})`)
@@ -124,6 +103,44 @@ export const boutique: Command = {
         return;
       }
 
+      // Recherche : fenêtre (modal) → saute à la carte trouvée
+      if (btn.customId === 'shop_search') {
+        const modal = new ModalBuilder().setCustomId('shop_search_modal').setTitle('🔍 Rechercher une carte');
+        const input = new TextInputBuilder()
+          .setCustomId('q')
+          .setLabel('Nom ou ID de la carte')
+          .setStyle(TextInputStyle.Short)
+          .setRequired(true)
+          .setMaxLength(100);
+        modal.addComponents(new ActionRowBuilder<TextInputBuilder>().addComponents(input));
+        await btn.showModal(modal);
+
+        const submitted = await btn
+          .awaitModalSubmit({
+            time: 60_000,
+            filter: (i) => i.customId === 'shop_search_modal' && i.user.id === interaction.user.id,
+          })
+          .catch(() => null);
+        if (!submitted) return;
+
+        const q = submitted.fields.getTextInputValue('q').trim().toLowerCase();
+        const found = cards.findIndex(
+          (c) => c.name.toLowerCase().includes(q) || c.cardId.toLowerCase().includes(q),
+        );
+        if (found === -1) {
+          await submitted.reply({ content: `🔍 Aucune carte en stock ne correspond à « ${q} ».`, flags: MessageFlags.Ephemeral });
+          return;
+        }
+        index = found;
+        if (submitted.isFromMessage()) {
+          await submitted.update(render());
+        } else {
+          await message.edit(render());
+          await submitted.reply({ content: '✅', flags: MessageFlags.Ephemeral }).catch(() => {});
+        }
+        return;
+      }
+
       // Achat de la carte affichée
       if (btn.customId === 'shop_buy') {
         await btn.deferReply({ flags: MessageFlags.Ephemeral });
@@ -152,7 +169,6 @@ export const boutique: Command = {
             break;
         }
 
-        // On rafraîchit le stock affiché de la carte courante.
         const fresh = await Card.findOne({ cardId: card.cardId });
         if (fresh) cards[index] = fresh;
         await message.edit(render()).catch(() => {});
