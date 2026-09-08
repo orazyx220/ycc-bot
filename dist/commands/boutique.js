@@ -6,6 +6,7 @@ const Card_1 = require("../database/models/Card");
 const rarities_1 = require("../config/rarities");
 const cardEmbed_1 = require("../utils/cardEmbed");
 const purchase_1 = require("../services/purchase");
+const requirements_1 = require("../utils/requirements");
 /**
  * /boutique — feuillette les cartes en stock et achète directement celle
  * affichée, avec le bouton « 🛒 Acheter ». Achat sécurisé (logique atomique).
@@ -87,6 +88,9 @@ exports.boutique = {
                         await btn.editReply({
                             content: `❌ Pas assez de Yumz (il t’en faut **${result.price}**, tu as **${result.balance}**).`,
                         });
+                        break;
+                    case 'locked':
+                        await btn.editReply({ content: (0, requirements_1.lockedMessage)(result.requires, result.missing) });
                         break;
                     case 'soldout':
                         await btn.editReply({ content: '⏳ Trop tard, cette carte est épuisée !' });

@@ -1,6 +1,7 @@
 import { Card, type CardDoc } from '../database/models/Card';
 import { User, getOrCreateUser } from '../database/models/User';
 import { Transaction } from '../database/models/Transaction';
+import { missingRequirements } from '../utils/requirements';
 
 /**
  * Résultat possible d'un achat. Ce type "discriminé" (par `status`) force
@@ -9,6 +10,7 @@ import { Transaction } from '../database/models/Transaction';
 export type PurchaseResult =
   | { status: 'ok'; card: CardDoc; serial: number; newBalance: number }
   | { status: 'insufficient'; price: number; balance: number }
+  | { status: 'locked'; requires: string[]; missing: string[] }
   | { status: 'soldout' }
   | { status: 'notfound' };
 
@@ -45,6 +47,15 @@ export async function purchaseCard(
 
   const price = cardMeta.price;
   const user = await getOrCreateUser(discordId);
+
+  // --- 0) VERROU DE PRÉREQUIS ---
+  // La carte peut exiger d'en posséder d'autres (ex: tout l'équipage).
+  if (cardMeta.requires.length > 0) {
+    const missing = missingRequirements(user.cards, cardMeta.requires);
+    if (missing.length > 0) {
+      return { status: 'locked', requires: cardMeta.requires, missing };
+    }
+  }
 
   // Vérif rapide "de confort" (le vrai garde-fou est le débit atomique en 1).
   if (user.yumz < price) {
@@ -105,6 +116,7 @@ export async function purchaseCard(
 /** Résultat d'une récupération GRATUITE (drop "cadeau"). */
 export type ClaimResult =
   | { status: 'ok'; card: CardDoc; serial: number }
+  | { status: 'locked'; requires: string[]; missing: string[] }
   | { status: 'soldout' }
   | { status: 'notfound' };
 
@@ -121,7 +133,15 @@ export async function claimFreeCard(
   const cardMeta = await Card.findOne({ cardId });
   if (!cardMeta) return { status: 'notfound' };
 
-  await getOrCreateUser(discordId);
+  const user = await getOrCreateUser(discordId);
+
+  // Verrou de prérequis (même pour une récupération gratuite).
+  if (cardMeta.requires.length > 0) {
+    const missing = missingRequirements(user.cards, cardMeta.requires);
+    if (missing.length > 0) {
+      return { status: 'locked', requires: cardMeta.requires, missing };
+    }
+  }
 
   const claimed = await Card.findOneAndUpdate(
     { cardId, remainingSupply: { $gt: 0 } },

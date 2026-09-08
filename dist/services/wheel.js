@@ -45,12 +45,14 @@ async function spinWheel(discordId) {
             break;
         }
         if (prize.kind === 'card') {
+            // On exclut les cartes à prérequis (elles ne se gagnent pas au hasard).
             const all = await Card_1.Card.find();
-            if (all.length === 0) {
+            const pool = all.filter((c) => c.requires.length === 0);
+            if (pool.length === 0) {
                 outcomes.push({ emoji: '🎯', label: 'Rien...', detail: 'Aucune carte disponible.' });
                 break;
             }
-            const card = all[Math.floor(Math.random() * all.length)];
+            const card = pool[Math.floor(Math.random() * pool.length)];
             await User_1.User.updateOne({ discordId }, { $push: { cards: card.cardId } });
             await Transaction_1.Transaction.create({ discordId, type: 'wheel_card', amount: 0, cardId: card.cardId });
             outcomes.push({ emoji: prize.emoji, label: prize.label, detail: `Tu gagnes **${card.name}** !` });

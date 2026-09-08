@@ -5,6 +5,7 @@ exports.handleGiftButton = handleGiftButton;
 const discord_js_1 = require("discord.js");
 const purchase_1 = require("../services/purchase");
 const dropMessage_1 = require("../utils/dropMessage");
+const requirements_1 = require("../utils/requirements");
 const PREFIX = 'gift:';
 /** Un customId de bouton cadeau ressemble à "gift:carte-mystere". */
 function isGiftButton(customId) {
@@ -29,6 +30,9 @@ async function handleGiftButton(interaction) {
         case 'soldout':
             await interaction.editReply({ content: '⏳ Trop tard, cette carte a déjà été récupérée !' });
             await (0, dropMessage_1.refreshDropMessage)(interaction.message, cardId);
+            return;
+        case 'locked':
+            await interaction.editReply({ content: (0, requirements_1.lockedMessage)(result.requires, result.missing) });
             return;
         case 'notfound':
             await interaction.editReply({ content: '❓ Cette carte n’existe plus.' });

@@ -1,6 +1,7 @@
 import { MessageFlags, type ButtonInteraction } from 'discord.js';
 import { purchaseCard } from '../services/purchase';
 import { refreshDropMessage } from '../utils/dropMessage';
+import { lockedMessage } from '../utils/requirements';
 
 const PREFIX = 'buy:';
 
@@ -41,6 +42,10 @@ export async function handleBuyButton(interaction: ButtonInteraction): Promise<v
           `❌ Pas assez de Yumz. Il t’en faut **${result.price}**, tu as **${result.balance}**. ` +
           `Récupère-en avec \`/daily\` ou en discutant !`,
       });
+      return;
+
+    case 'locked':
+      await interaction.editReply({ content: lockedMessage(result.requires, result.missing) });
       return;
 
     case 'notfound':

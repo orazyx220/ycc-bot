@@ -30,7 +30,10 @@ exports.editcard = {
         .addIntegerOption((o) => o
         .setName('restock')
         .setDescription('Ajoute N exemplaires (stock total + disponible)')
-        .setMinValue(1)),
+        .setMinValue(1))
+        .addStringOption((o) => o
+        .setName('requiert')
+        .setDescription('IDs requis séparés par des virgules (ou "aucun" pour retirer les prérequis)')),
     async execute(interaction) {
         if (!interaction.memberPermissions?.has(discord_js_1.PermissionFlagsBits.Administrator)) {
             await interaction.reply({
@@ -88,6 +91,29 @@ exports.editcard = {
             card.maxSupply += restock;
             card.remainingSupply += restock;
             changes.push(`+${restock} stock`);
+        }
+        const requiertRaw = interaction.options.getString('requiert');
+        if (requiertRaw !== null) {
+            const lower = requiertRaw.trim().toLowerCase();
+            if (lower === 'aucun' || lower === '') {
+                card.requires = [];
+                changes.push('prérequis retirés');
+            }
+            else {
+                const requires = requiertRaw.split(',').map((s) => s.trim()).filter(Boolean);
+                const found = await Card_1.Card.find({ cardId: { $in: requires } });
+                const foundIds = new Set(found.map((c) => c.cardId));
+                const unknown = requires.filter((r) => !foundIds.has(r));
+                if (unknown.length > 0) {
+                    await interaction.reply({
+                        content: `❓ Ces cartes requises n’existent pas : ${unknown.map((u) => `\`${u}\``).join(', ')}.`,
+                        flags: discord_js_1.MessageFlags.Ephemeral,
+                    });
+                    return;
+                }
+                card.requires = requires;
+                changes.push('prérequis');
+            }
         }
         if (changes.length === 0) {
             await interaction.reply({

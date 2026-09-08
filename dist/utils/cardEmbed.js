@@ -12,7 +12,7 @@ function buildCardEmbed(card) {
     const dispo = card.remainingSupply > 0
         ? `${card.remainingSupply}/${card.maxSupply}`
         : '❌ Épuisée';
-    return new discord_js_1.EmbedBuilder()
+    const embed = new discord_js_1.EmbedBuilder()
         .setColor(card.borderColor ?? info.color) // couleur perso, sinon celle de la rareté
         .setTitle(`${info.emoji} ${card.name}`)
         // La description ne s'affiche que si elle est renseignée.
@@ -20,4 +20,12 @@ function buildCardEmbed(card) {
         .setImage(card.imageUrl)
         .addFields({ name: 'Rareté', value: info.label, inline: true }, { name: 'Prix', value: `💰 ${card.price} Yumz`, inline: true }, { name: 'Disponibles', value: dispo, inline: true })
         .setFooter({ text: `ID : ${card.cardId}` });
+    // Carte à prérequis : on affiche l'équipage nécessaire pour la débloquer.
+    if (card.requires.length > 0) {
+        embed.addFields({
+            name: '🔒 Se débloque en possédant',
+            value: card.requires.map((r) => `\`${r}\``).join(', '),
+        });
+    }
+    return embed;
 }

@@ -5,6 +5,7 @@ exports.claimFreeCard = claimFreeCard;
 const Card_1 = require("../database/models/Card");
 const User_1 = require("../database/models/User");
 const Transaction_1 = require("../database/models/Transaction");
+const requirements_1 = require("../utils/requirements");
 /**
  * ⭐️ LE cœur anti-concurrence du projet.
  *
@@ -35,6 +36,14 @@ async function purchaseCard(discordId, cardId) {
         return { status: 'notfound' };
     const price = cardMeta.price;
     const user = await (0, User_1.getOrCreateUser)(discordId);
+    // --- 0) VERROU DE PRÉREQUIS ---
+    // La carte peut exiger d'en posséder d'autres (ex: tout l'équipage).
+    if (cardMeta.requires.length > 0) {
+        const missing = (0, requirements_1.missingRequirements)(user.cards, cardMeta.requires);
+        if (missing.length > 0) {
+            return { status: 'locked', requires: cardMeta.requires, missing };
+        }
+    }
     // Vérif rapide "de confort" (le vrai garde-fou est le débit atomique en 1).
     if (user.yumz < price) {
         return { status: 'insufficient', price, balance: user.yumz };
@@ -85,7 +94,14 @@ async function claimFreeCard(discordId, cardId, logType = 'gift') {
     const cardMeta = await Card_1.Card.findOne({ cardId });
     if (!cardMeta)
         return { status: 'notfound' };
-    await (0, User_1.getOrCreateUser)(discordId);
+    const user = await (0, User_1.getOrCreateUser)(discordId);
+    // Verrou de prérequis (même pour une récupération gratuite).
+    if (cardMeta.requires.length > 0) {
+        const missing = (0, requirements_1.missingRequirements)(user.cards, cardMeta.requires);
+        if (missing.length > 0) {
+            return { status: 'locked', requires: cardMeta.requires, missing };
+        }
+    }
     const claimed = await Card_1.Card.findOneAndUpdate({ cardId, remainingSupply: { $gt: 0 } }, { $inc: { remainingSupply: -1 } }, { returnDocument: 'after' });
     if (!claimed)
         return { status: 'soldout' };

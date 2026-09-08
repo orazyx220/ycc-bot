@@ -5,6 +5,7 @@ exports.handleBuyButton = handleBuyButton;
 const discord_js_1 = require("discord.js");
 const purchase_1 = require("../services/purchase");
 const dropMessage_1 = require("../utils/dropMessage");
+const requirements_1 = require("../utils/requirements");
 const PREFIX = 'buy:';
 /** Un customId de bouton d'achat ressemble à "buy:ycc-originel". */
 function isBuyButton(customId) {
@@ -36,6 +37,9 @@ async function handleBuyButton(interaction) {
                 content: `❌ Pas assez de Yumz. Il t’en faut **${result.price}**, tu as **${result.balance}**. ` +
                     `Récupère-en avec \`/daily\` ou en discutant !`,
             });
+            return;
+        case 'locked':
+            await interaction.editReply({ content: (0, requirements_1.lockedMessage)(result.requires, result.missing) });
             return;
         case 'notfound':
             await interaction.editReply({ content: '❓ Cette carte n’existe plus.' });

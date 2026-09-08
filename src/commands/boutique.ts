@@ -12,6 +12,7 @@ import { Card } from '../database/models/Card';
 import { RARITIES } from '../config/rarities';
 import { buildCardEmbed } from '../utils/cardEmbed';
 import { purchaseCard } from '../services/purchase';
+import { lockedMessage } from '../utils/requirements';
 
 /**
  * /boutique — feuillette les cartes en stock et achète directement celle
@@ -111,6 +112,9 @@ export const boutique: Command = {
             await btn.editReply({
               content: `❌ Pas assez de Yumz (il t’en faut **${result.price}**, tu as **${result.balance}**).`,
             });
+            break;
+          case 'locked':
+            await btn.editReply({ content: lockedMessage(result.requires, result.missing) });
             break;
           case 'soldout':
             await btn.editReply({ content: '⏳ Trop tard, cette carte est épuisée !' });

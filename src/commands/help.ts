@@ -234,9 +234,10 @@ const DETAILS: Record<string, Detail> = {
       { name: 'lien_image', desc: 'Lien DIRECT de l’image (voir la note ci-dessous)', required: true },
       { name: 'prix', desc: 'Prix en Yumz (défaut 1000)', required: false },
       { name: 'stock', desc: 'Nombre d’exemplaires (défaut 1 = unique)', required: false },
+      { name: 'requiert', desc: 'IDs de cartes à posséder pour la débloquer (ex: luffy,zoro,nami)', required: false },
     ],
-    examples: ['/addcard nom:Dragon de Feu rarete:Légendaire description:Né des braises lien_image:https://i.imgur.com/x.png prix:5000 stock:3'],
-    notes: IMGUR_GUIDE,
+    examples: ['/addcard nom:Thousand Sunny rarete:Légendaire description:Le navire lien_image:https://i.imgur.com/x.png prix:5000 requiert:luffy,zoro,nami'],
+    notes: 'Une carte à prérequis n’est obtenable (boutique/booster) que si on possède TOUT l’équipage. Elle est exclue des drops auto et de la roue.\n\n' + IMGUR_GUIDE,
   },
   editcard: {
     name: '/editcard', admin: true,
@@ -246,8 +247,9 @@ const DETAILS: Record<string, Detail> = {
       { name: 'id', desc: 'L’identifiant de la carte à modifier', required: true },
       { name: 'nom / rarete / description / lien_image / prix', desc: 'Les champs à changer (facultatifs)', required: false },
       { name: 'restock', desc: 'Ajoute N exemplaires (stock total + disponible)', required: false },
+      { name: 'requiert', desc: 'IDs requis (ou "aucun" pour retirer les prérequis)', required: false },
     ],
-    examples: ['/editcard id:dragon-epique prix:3000', '/editcard id:dragon-epique restock:5'],
+    examples: ['/editcard id:dragon-epique prix:3000', '/editcard id:thousand-sunny requiert:luffy,zoro,nami'],
   },
   delcard: {
     name: '/delcard', admin: true,

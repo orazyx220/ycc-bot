@@ -37,6 +37,12 @@ const cardSchema = new Schema(
 
     // Comment on l'obtient lors d'un drop : 'buy' (payante) ou 'gift' (gratuite).
     dropMode: { type: String, required: true, enum: ['buy', 'gift'], default: 'buy' },
+
+    // Cartes à posséder pour pouvoir obtenir celle-ci (ex: tout l'équipage
+    // avant le bateau). Vide = aucune condition. Ces cartes verrouillées sont
+    // exclues des sources aléatoires (drops auto, roue) et du booster tant que
+    // le membre n'a pas tous les prérequis.
+    requires: { type: [String], required: true, default: [] },
   },
   { timestamps: true },
 );

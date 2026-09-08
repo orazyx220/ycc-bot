@@ -81,6 +81,11 @@ export const addcard: Command = {
         .setName('stock')
         .setDescription('Nombre d’exemplaires (défaut : 1 = unique)')
         .setMinValue(1),
+    )
+    .addStringOption((o) =>
+      o
+        .setName('requiert')
+        .setDescription('IDs de cartes à posséder pour la débloquer, séparés par des virgules'),
     ),
 
   async execute(interaction: ChatInputCommandInteraction) {
@@ -118,6 +123,23 @@ export const addcard: Command = {
     }
     const imageUrl = lienImage;
 
+    // Prérequis (facultatif) : on vérifie que les cartes citées existent.
+    const requiertRaw = interaction.options.getString('requiert');
+    let requires: string[] = [];
+    if (requiertRaw) {
+      requires = requiertRaw.split(',').map((s) => s.trim()).filter(Boolean);
+      const found = await Card.find({ cardId: { $in: requires } });
+      const foundIds = new Set(found.map((c) => c.cardId));
+      const unknown = requires.filter((r) => !foundIds.has(r));
+      if (unknown.length > 0) {
+        await interaction.reply({
+          content: `❓ Ces cartes requises n’existent pas : ${unknown.map((u) => `\`${u}\``).join(', ')}. Crée-les d’abord.`,
+          flags: MessageFlags.Ephemeral,
+        });
+        return;
+      }
+    }
+
     const cardId = await uniqueCardId(slugify(nom));
 
     const card = await Card.create({
@@ -129,6 +151,7 @@ export const addcard: Command = {
       imageUrl,
       maxSupply: stock,
       remainingSupply: stock,
+      requires,
     });
 
     await interaction.reply({

@@ -36,6 +36,14 @@ export async function openBooster(discordId: string): Promise<BoosterResult> {
   const all = await Card.find();
   if (all.length === 0) return { status: 'empty' };
 
+  // Pool ÉLIGIBLE pour CE joueur : on retire les cartes à prérequis dont il ne
+  // possède pas encore tout l'équipage (elles restent "à débloquer").
+  const owned = new Set(user.cards);
+  const eligible = all.filter(
+    (c) => c.requires.length === 0 || c.requires.every((r) => owned.has(r)),
+  );
+  if (eligible.length === 0) return { status: 'empty' };
+
   // Débit atomique du prix du booster.
   const charged = await User.findOneAndUpdate(
     { discordId, yumz: { $gte: BOOSTER_PRICE } },
@@ -44,9 +52,9 @@ export async function openBooster(discordId: string): Promise<BoosterResult> {
   );
   if (!charged) return { status: 'insufficient', price: BOOSTER_PRICE, balance: user.yumz };
 
-  // Regroupe les cartes par rareté.
+  // Regroupe les cartes ÉLIGIBLES par rareté.
   const byRarity = new Map<string, CardDoc[]>();
-  for (const c of all) {
+  for (const c of eligible) {
     const list = byRarity.get(c.rarity) ?? [];
     list.push(c);
     byRarity.set(c.rarity, list);

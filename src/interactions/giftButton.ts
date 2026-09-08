@@ -1,6 +1,7 @@
 import { MessageFlags, type ButtonInteraction } from 'discord.js';
 import { claimFreeCard } from '../services/purchase';
 import { refreshDropMessage } from '../utils/dropMessage';
+import { lockedMessage } from '../utils/requirements';
 
 const PREFIX = 'gift:';
 
@@ -32,6 +33,10 @@ export async function handleGiftButton(interaction: ButtonInteraction): Promise<
     case 'soldout':
       await interaction.editReply({ content: '⏳ Trop tard, cette carte a déjà été récupérée !' });
       await refreshDropMessage(interaction.message, cardId);
+      return;
+
+    case 'locked':
+      await interaction.editReply({ content: lockedMessage(result.requires, result.missing) });
       return;
 
     case 'notfound':

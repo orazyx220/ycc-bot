@@ -16,8 +16,10 @@ function randomInterval() {
 }
 /** Déclenche UN drop : choisit une carte de la réserve et la poste. */
 async function dropOnce(client) {
-    // Cartes en réserve encore en stock.
-    const pool = await Card_1.Card.find({ autoDrop: true, remainingSupply: { $gt: 0 } });
+    // Cartes en réserve encore en stock (hors cartes à prérequis, qui ne
+    // doivent jamais tomber gratuitement/au hasard).
+    const found = await Card_1.Card.find({ autoDrop: true, remainingSupply: { $gt: 0 } });
+    const pool = found.filter((c) => c.requires.length === 0);
     if (pool.length === 0)
         return;
     const card = pool[Math.floor(Math.random() * pool.length)];

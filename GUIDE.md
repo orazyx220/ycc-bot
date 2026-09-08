@@ -61,6 +61,13 @@ Chaque carte a une **rareté** (de la plus commune à la plus rare) :
 Commune 55% · Rare 28% · Épique 12% · Légendaire 4% · Mystère 0,9% · Evil 0,1%
 *(Les tirages ne consomment pas le stock : tu peux tomber plusieurs fois sur la même carte.)*
 
+### 🔒 Cartes à débloquer (prérequis)
+Certaines cartes spéciales ne s'obtiennent **qu'après en avoir collectionné d'autres** (par exemple le bateau qui nécessite tout l'équipage). Tant que tu n'as pas **toutes** les cartes requises :
+- elle **n'apparaît pas** dans tes boosters, ni dans les drops auto ou la roue ;
+- si tu essaies de l'acheter, le bot te dit ce qu'il te manque encore.
+
+Une fois l'équipage complet, tu peux l'obtenir (en boutique ou via un booster) en payant son prix — et tu **gardes** ton équipage. La fiche de la carte (`/carte`) affiche la liste des prérequis.
+
 ---
 
 ## 📜 Toutes les commandes
