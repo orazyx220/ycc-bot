@@ -24,11 +24,12 @@ const PAGE = 25; // un menu déroulant Discord accepte 25 options max
 export async function browseCards(
   interaction: ChatInputCommandInteraction,
   cards: CardDoc[],
-  { buy = false }: { buy?: boolean } = {},
+  { buy = false, startIndex = 0 }: { buy?: boolean; startIndex?: number } = {},
 ): Promise<void> {
   if (cards.length === 0) return; // l'appelant gère le cas vide
 
-  let index = 0;
+  // On démarre sur la carte demandée (ex: résultat de recherche), sinon la 1re.
+  let index = Math.min(Math.max(0, startIndex), cards.length - 1);
   const total = cards.length;
   const totalPages = Math.ceil(total / PAGE);
 

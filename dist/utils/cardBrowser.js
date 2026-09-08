@@ -15,10 +15,11 @@ const PAGE = 25; // un menu déroulant Discord accepte 25 options max
  *
  * Pas de fenêtre/modal → aucun avertissement Discord. Réservé à l'auteur.
  */
-async function browseCards(interaction, cards, { buy = false } = {}) {
+async function browseCards(interaction, cards, { buy = false, startIndex = 0 } = {}) {
     if (cards.length === 0)
         return; // l'appelant gère le cas vide
-    let index = 0;
+    // On démarre sur la carte demandée (ex: résultat de recherche), sinon la 1re.
+    let index = Math.min(Math.max(0, startIndex), cards.length - 1);
     const total = cards.length;
     const totalPages = Math.ceil(total / PAGE);
     const render = (frozen = false) => {

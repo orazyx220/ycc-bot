@@ -24,19 +24,24 @@ exports.boutique = {
     async execute(interaction) {
         const recherche = interaction.options.getString('recherche') ?? '';
         const rank = new Map(rarities_1.RARITIES.map((r, i) => [r, i]));
-        let cards = await Card_1.Card.find({ remainingSupply: { $gt: 0 } });
-        if (recherche)
-            cards = cards.filter((c) => (0, cardSearch_1.matchesSearch)(c, recherche));
+        const cards = await Card_1.Card.find({ remainingSupply: { $gt: 0 } });
         cards.sort((a, b) => (rank.get(b.rarity) ?? 0) - (rank.get(a.rarity) ?? 0) || b.price - a.price);
         if (cards.length === 0) {
-            await interaction.reply({
-                content: recherche
-                    ? '🔍 Aucune carte en stock ne correspond à ta recherche.'
-                    : '🛒 La boutique est vide pour l’instant.',
-                flags: recherche ? discord_js_1.MessageFlags.Ephemeral : undefined,
-            });
+            await interaction.reply({ content: '🛒 La boutique est vide pour l’instant.' });
             return;
         }
-        await (0, cardBrowser_1.browseCards)(interaction, cards, { buy: true });
+        // La recherche positionne sur la carte trouvée (toutes restent accessibles).
+        let startIndex = 0;
+        if (recherche) {
+            startIndex = cards.findIndex((c) => (0, cardSearch_1.matchesSearch)(c, recherche));
+            if (startIndex === -1) {
+                await interaction.reply({
+                    content: '🔍 Aucune carte en stock ne correspond à ta recherche.',
+                    flags: discord_js_1.MessageFlags.Ephemeral,
+                });
+                return;
+            }
+        }
+        await (0, cardBrowser_1.browseCards)(interaction, cards, { buy: true, startIndex });
     },
 };

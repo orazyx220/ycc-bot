@@ -24,22 +24,29 @@ exports.catalogue = {
     async execute(interaction) {
         const recherche = interaction.options.getString('recherche') ?? '';
         const rarityRank = new Map(rarities_1.RARITIES.map((r, i) => [r, i]));
-        let cards = await Card_1.Card.find();
-        if (recherche)
-            cards = cards.filter((c) => (0, cardSearch_1.matchesSearch)(c, recherche));
+        const cards = await Card_1.Card.find();
         cards.sort((a, b) => {
             const byRarity = (rarityRank.get(b.rarity) ?? 0) - (rarityRank.get(a.rarity) ?? 0);
             return byRarity !== 0 ? byRarity : b.price - a.price;
         });
         if (cards.length === 0) {
             await interaction.reply({
-                content: recherche
-                    ? '🔍 Aucune carte ne correspond à ta recherche.'
-                    : '📭 Le catalogue est vide pour l’instant. Reviens bientôt !',
-                flags: recherche ? discord_js_1.MessageFlags.Ephemeral : undefined,
+                content: '📭 Le catalogue est vide pour l’instant. Reviens bientôt !',
             });
             return;
         }
-        await (0, cardBrowser_1.browseCards)(interaction, cards);
+        // La recherche positionne sur la carte trouvée (toutes restent accessibles).
+        let startIndex = 0;
+        if (recherche) {
+            startIndex = cards.findIndex((c) => (0, cardSearch_1.matchesSearch)(c, recherche));
+            if (startIndex === -1) {
+                await interaction.reply({
+                    content: '🔍 Aucune carte ne correspond à ta recherche.',
+                    flags: discord_js_1.MessageFlags.Ephemeral,
+                });
+                return;
+            }
+        }
+        await (0, cardBrowser_1.browseCards)(interaction, cards, { startIndex });
     },
 };

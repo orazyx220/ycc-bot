@@ -33,8 +33,7 @@ export const catalogue: Command = {
     const recherche = interaction.options.getString('recherche') ?? '';
 
     const rarityRank = new Map(RARITIES.map((r, i) => [r, i]));
-    let cards = await Card.find();
-    if (recherche) cards = cards.filter((c) => matchesSearch(c, recherche));
+    const cards = await Card.find();
     cards.sort((a, b) => {
       const byRarity = (rarityRank.get(b.rarity) ?? 0) - (rarityRank.get(a.rarity) ?? 0);
       return byRarity !== 0 ? byRarity : b.price - a.price;
@@ -42,14 +41,24 @@ export const catalogue: Command = {
 
     if (cards.length === 0) {
       await interaction.reply({
-        content: recherche
-          ? '🔍 Aucune carte ne correspond à ta recherche.'
-          : '📭 Le catalogue est vide pour l’instant. Reviens bientôt !',
-        flags: recherche ? MessageFlags.Ephemeral : undefined,
+        content: '📭 Le catalogue est vide pour l’instant. Reviens bientôt !',
       });
       return;
     }
 
-    await browseCards(interaction, cards);
+    // La recherche positionne sur la carte trouvée (toutes restent accessibles).
+    let startIndex = 0;
+    if (recherche) {
+      startIndex = cards.findIndex((c) => matchesSearch(c, recherche));
+      if (startIndex === -1) {
+        await interaction.reply({
+          content: '🔍 Aucune carte ne correspond à ta recherche.',
+          flags: MessageFlags.Ephemeral,
+        });
+        return;
+      }
+    }
+
+    await browseCards(interaction, cards, { startIndex });
   },
 };
