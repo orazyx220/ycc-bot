@@ -102,11 +102,11 @@ const DETAILS: Record<string, Detail> = {
   },
   catalogue: {
     name: '/catalogue', admin: false,
-    short: 'Parcours les cartes (menu déroulant).',
-    summary: 'Parcours les cartes avec un menu déroulant pour choisir directement, et les boutons ◀ / ▶.',
-    params: [],
-    examples: ['/catalogue'],
-    notes: 'Un menu déroulant liste les cartes (25 par page) pour sauter à celle voulue. Triées de la plus rare à la plus commune.',
+    short: 'Parcours les cartes (menu + recherche).',
+    summary: 'Parcours les cartes avec un menu déroulant, les boutons ◀ / ▶ (par lot de 25), ou l’option recherche.',
+    params: [{ name: 'recherche', desc: 'Chercher par nom/ID (tape → suggestions)', required: false }],
+    examples: ['/catalogue', '/catalogue recherche:trickster'],
+    notes: 'Menu déroulant pour choisir une carte ; ◀ / ▶ changent de lot de 25 ; l’option recherche filtre dans toutes les cartes.',
   },
   carte: {
     name: '/carte', admin: false,
@@ -117,11 +117,11 @@ const DETAILS: Record<string, Detail> = {
   },
   boutique: {
     name: '/boutique', admin: false,
-    short: 'Achète des cartes (menu déroulant).',
-    summary: 'Choisis une carte dans le menu déroulant et achète-la avec le bouton 🛒 Acheter.',
-    params: [],
-    examples: ['/boutique'],
-    notes: 'Menu déroulant pour choisir la carte (25 par page). Réservé à celui qui lance la commande ; expire après 2 min.',
+    short: 'Achète des cartes (menu + recherche).',
+    summary: 'Choisis une carte (menu déroulant ou option recherche) et achète-la avec le bouton 🛒 Acheter.',
+    params: [{ name: 'recherche', desc: 'Chercher par nom/ID (tape → suggestions)', required: false }],
+    examples: ['/boutique', '/boutique recherche:zougou'],
+    notes: 'Menu déroulant + ◀ / ▶ (lot de 25), ou option recherche pour filtrer. Réservé à celui qui lance la commande.',
   },
   ouvrir: {
     name: '/ouvrir', admin: false,
