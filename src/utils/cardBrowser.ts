@@ -5,6 +5,7 @@ import {
   StringSelectMenuBuilder,
   MessageFlags,
   type ChatInputCommandInteraction,
+  type EmbedBuilder,
 } from 'discord.js';
 import { buildCardEmbed } from './cardEmbed';
 import { rarityInfo } from '../config/rarities';
@@ -33,9 +34,21 @@ export async function browseCards(
   const total = cards.length;
   const totalPages = Math.ceil(total / PAGE);
 
+  // Cache des embeds : chaque carte n'est construite qu'une seule fois, puis
+  // réutilisée à chaque retour dessus (navigation plus fluide).
+  const embedCache = new Array<EmbedBuilder | undefined>(total);
+  const getEmbed = (i: number): EmbedBuilder => {
+    let e = embedCache[i];
+    if (!e) {
+      e = buildCardEmbed(cards[i]!).setFooter({ text: `${i + 1}/${total}` });
+      embedCache[i] = e;
+    }
+    return e;
+  };
+
   const render = (frozen = false) => {
     const card = cards[index]!;
-    const embed = buildCardEmbed(card).setFooter({ text: `${index + 1}/${total}` });
+    const embed = getEmbed(index);
 
     // Fenêtre de 25 cartes contenant la carte affichée.
     const page = Math.floor(index / PAGE);
@@ -149,7 +162,10 @@ export async function browseCards(
             break;
         }
         const fresh = await Card.findOne({ cardId: card.cardId });
-        if (fresh) cards[index] = fresh;
+        if (fresh) {
+          cards[index] = fresh;
+          embedCache[index] = undefined; // stock changé → on reconstruira l'embed
+        }
         await message.edit(render()).catch(() => {});
         return;
       }
