@@ -102,10 +102,13 @@ const DETAILS: Record<string, Detail> = {
   },
   catalogue: {
     name: '/catalogue', admin: false,
-    short: 'Feuillette toutes les cartes.',
-    summary: 'Feuillette toutes les cartes existantes, une par une (image en grand), avec les boutons ◀ / ▶.',
-    params: [],
-    examples: ['/catalogue'],
+    short: 'Feuillette les cartes (avec recherche).',
+    summary: 'Feuillette les cartes, une par une (image en grand), avec les boutons ◀ / ▶. Options pour filtrer.',
+    params: [
+      { name: 'recherche', desc: 'Filtrer par nom ou ID (autocomplété)', required: false },
+      { name: 'rarete', desc: 'Filtrer par rareté', required: false },
+    ],
+    examples: ['/catalogue', '/catalogue recherche:dragon', '/catalogue rarete:Légendaire'],
     notes: 'Les cartes sont triées de la plus rare à la plus commune.',
   },
   carte: {
@@ -117,10 +120,13 @@ const DETAILS: Record<string, Detail> = {
   },
   boutique: {
     name: '/boutique', admin: false,
-    short: 'Achète des cartes avec tes Yumz.',
-    summary: 'Feuillette les cartes en stock et achète directement celle affichée avec le bouton 🛒 Acheter.',
-    params: [],
-    examples: ['/boutique'],
+    short: 'Achète des cartes (avec recherche).',
+    summary: 'Feuillette les cartes en stock et achète celle affichée avec le bouton 🛒 Acheter. Options pour filtrer.',
+    params: [
+      { name: 'recherche', desc: 'Filtrer par nom ou ID (autocomplété)', required: false },
+      { name: 'rarete', desc: 'Filtrer par rareté', required: false },
+    ],
+    examples: ['/boutique', '/boutique recherche:sunny', '/boutique rarete:Épique'],
     notes: 'Navigation et achat réservés à celui qui lance la commande ; expire après 2 min.',
   },
   ouvrir: {

@@ -7,21 +7,42 @@ const rarities_1 = require("../config/rarities");
 const cardEmbed_1 = require("../utils/cardEmbed");
 const purchase_1 = require("../services/purchase");
 const requirements_1 = require("../utils/requirements");
+const cardSearch_1 = require("../utils/cardSearch");
 /**
- * /boutique — feuillette les cartes en stock et achète directement celle
- * affichée, avec le bouton « 🛒 Acheter ». Achat sécurisé (logique atomique).
+ * /boutique [recherche] [rarete] — feuillette les cartes en stock et achète
+ * celle affichée avec le bouton « 🛒 Acheter ». Options pour filtrer par nom/rareté.
  * Navigation et achat réservés à l'auteur de la commande.
  */
 exports.boutique = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName('boutique')
-        .setDescription('Achète directement des cartes avec tes Yumz.'),
+        .setDescription('Achète des cartes avec tes Yumz (avec recherche).')
+        .addStringOption((o) => o.setName('recherche').setDescription('Filtrer par nom ou ID de carte').setAutocomplete(true))
+        .addStringOption((o) => o
+        .setName('rarete')
+        .setDescription('Filtrer par rareté')
+        .addChoices(...rarities_1.RARITIES.map((r) => ({ name: rarities_1.RARITY_INFO[r].label, value: r })))),
+    async autocomplete(interaction) {
+        await (0, cardSearch_1.respondCardAutocomplete)(interaction, true);
+    },
     async execute(interaction) {
+        const recherche = interaction.options.getString('recherche') ?? '';
+        const rarete = interaction.options.getString('rarete');
         const rank = new Map(rarities_1.RARITIES.map((r, i) => [r, i]));
-        const cards = await Card_1.Card.find({ remainingSupply: { $gt: 0 } });
+        let cards = await Card_1.Card.find({ remainingSupply: { $gt: 0 } });
+        if (recherche)
+            cards = cards.filter((c) => (0, cardSearch_1.matchesSearch)(c, recherche));
+        if (rarete)
+            cards = cards.filter((c) => c.rarity === rarete);
         cards.sort((a, b) => (rank.get(b.rarity) ?? 0) - (rank.get(a.rarity) ?? 0) || b.price - a.price);
         if (cards.length === 0) {
-            await interaction.reply({ content: '🛒 La boutique est vide pour l’instant.' });
+            const filtre = recherche || rarete;
+            await interaction.reply({
+                content: filtre
+                    ? '🔍 Aucune carte en stock ne correspond à ta recherche.'
+                    : '🛒 La boutique est vide pour l’instant.',
+                flags: discord_js_1.MessageFlags.Ephemeral,
+            });
             return;
         }
         let index = 0;
