@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.matchesSearch = matchesSearch;
 exports.respondCardAutocomplete = respondCardAutocomplete;
+exports.respondCardIdAutocomplete = respondCardIdAutocomplete;
 const Card_1 = require("../database/models/Card");
 const rarities_1 = require("../config/rarities");
 /**
@@ -29,5 +30,18 @@ async function respondCardAutocomplete(interaction, onlyInStock = false) {
         .filter((c) => c.name.toLowerCase().includes(focused) || c.cardId.toLowerCase().includes(focused))
         .slice(0, 25)
         .map((c) => ({ name: `${c.name} (${c.cardId})`.slice(0, 100), value: c.name.slice(0, 100) }));
+    await interaction.respond(results);
+}
+/**
+ * Autocomplétion pour les options `id` de carte : on tape le nom, la suggestion
+ * affiche « Nom (id) » mais renvoie l'ID réel — plus besoin de connaître l'ID.
+ */
+async function respondCardIdAutocomplete(interaction) {
+    const focused = interaction.options.getFocused().toLowerCase();
+    const cards = await Card_1.Card.find().limit(300);
+    const results = cards
+        .filter((c) => c.name.toLowerCase().includes(focused) || c.cardId.toLowerCase().includes(focused))
+        .slice(0, 25)
+        .map((c) => ({ name: `${c.name} (${c.cardId})`.slice(0, 100), value: c.cardId }));
     await interaction.respond(results);
 }

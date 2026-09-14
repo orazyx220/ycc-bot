@@ -4,6 +4,7 @@ exports.drop = void 0;
 const discord_js_1 = require("discord.js");
 const Card_1 = require("../database/models/Card");
 const dropMessage_1 = require("../utils/dropMessage");
+const cardSearch_1 = require("../utils/cardSearch");
 /**
  * /drop <id> — (Admin) poste une carte achetable dans le salon courant,
  * avec un bouton « Acheter ». La protection anti-concurrence est côté service
@@ -15,10 +16,14 @@ exports.drop = {
         .setDescription('(Admin) Poste une carte achetable dans ce salon.')
         .addStringOption((option) => option
         .setName('id')
-        .setDescription('ID de la carte à droper (ex: ycc-originel)')
-        .setRequired(true))
+        .setDescription('La carte à droper (tape son nom)')
+        .setRequired(true)
+        .setAutocomplete(true))
         // Masque la commande aux non-admins dans l'interface Discord.
         .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.Administrator),
+    async autocomplete(interaction) {
+        await (0, cardSearch_1.respondCardIdAutocomplete)(interaction);
+    },
     async execute(interaction) {
         // Sécurité en profondeur : on revérifie côté serveur (au cas où).
         if (!interaction.memberPermissions?.has(discord_js_1.PermissionFlagsBits.Administrator)) {

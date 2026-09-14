@@ -4,6 +4,7 @@ exports.givecard = void 0;
 const discord_js_1 = require("discord.js");
 const purchase_1 = require("../services/purchase");
 const cardGrant_1 = require("../services/cardGrant");
+const cardSearch_1 = require("../utils/cardSearch");
 /**
  * /givecard <membre> <id> [bonus] — (Admin) offre une carte à un membre.
  * - Par défaut : prend un exemplaire sur le stock (respecte l'unicité).
@@ -15,10 +16,13 @@ exports.givecard = {
         .setDescription('(Admin) Offre une carte à un membre.')
         .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.Administrator)
         .addUserOption((o) => o.setName('membre').setDescription('Le membre à qui offrir la carte').setRequired(true))
-        .addStringOption((o) => o.setName('id').setDescription('ID de la carte').setRequired(true))
+        .addStringOption((o) => o.setName('id').setDescription('La carte (tape son nom)').setRequired(true).setAutocomplete(true))
         .addBooleanOption((o) => o
         .setName('bonus')
         .setDescription('Créer un exemplaire BONUS sans toucher au stock (dépasse la limite)')),
+    async autocomplete(interaction) {
+        await (0, cardSearch_1.respondCardIdAutocomplete)(interaction);
+    },
     async execute(interaction) {
         if (!interaction.memberPermissions?.has(discord_js_1.PermissionFlagsBits.Administrator)) {
             await interaction.reply({

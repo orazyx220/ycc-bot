@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editcard = void 0;
 const discord_js_1 = require("discord.js");
+const cardSearch_1 = require("../utils/cardSearch");
 const Card_1 = require("../database/models/Card");
 const rarities_1 = require("../config/rarities");
 const cardEmbed_1 = require("../utils/cardEmbed");
@@ -18,7 +19,7 @@ exports.editcard = {
         .setName('editcard')
         .setDescription('(Admin) Modifie une carte existante.')
         .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.Administrator)
-        .addStringOption((o) => o.setName('id').setDescription('ID de la carte à modifier').setRequired(true))
+        .addStringOption((o) => o.setName('id').setDescription('La carte à modifier (tape son nom)').setRequired(true).setAutocomplete(true))
         .addStringOption((o) => o.setName('nom').setDescription('Nouveau nom').setMaxLength(100))
         .addStringOption((o) => o
         .setName('rarete')
@@ -34,6 +35,9 @@ exports.editcard = {
         .addStringOption((o) => o
         .setName('requiert')
         .setDescription('IDs requis séparés par des virgules (ou "aucun" pour retirer les prérequis)')),
+    async autocomplete(interaction) {
+        await (0, cardSearch_1.respondCardIdAutocomplete)(interaction);
+    },
     async execute(interaction) {
         if (!interaction.memberPermissions?.has(discord_js_1.PermissionFlagsBits.Administrator)) {
             await interaction.reply({

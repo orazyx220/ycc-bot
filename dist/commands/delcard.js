@@ -4,6 +4,7 @@ exports.delcard = void 0;
 const discord_js_1 = require("discord.js");
 const Card_1 = require("../database/models/Card");
 const User_1 = require("../database/models/User");
+const cardSearch_1 = require("../utils/cardSearch");
 /**
  * /delcard <id> — (Admin) supprime définitivement une carte.
  * Retire aussi ses exemplaires des inventaires des membres, pour ne pas
@@ -14,7 +15,10 @@ exports.delcard = {
         .setName('delcard')
         .setDescription('(Admin) Supprime une carte.')
         .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.Administrator)
-        .addStringOption((o) => o.setName('id').setDescription('ID de la carte à supprimer').setRequired(true)),
+        .addStringOption((o) => o.setName('id').setDescription('La carte à supprimer (tape son nom)').setRequired(true).setAutocomplete(true)),
+    async autocomplete(interaction) {
+        await (0, cardSearch_1.respondCardIdAutocomplete)(interaction);
+    },
     async execute(interaction) {
         if (!interaction.memberPermissions?.has(discord_js_1.PermissionFlagsBits.Administrator)) {
             await interaction.reply({

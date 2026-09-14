@@ -3,8 +3,10 @@ import {
   PermissionFlagsBits,
   MessageFlags,
   type ChatInputCommandInteraction,
+  type AutocompleteInteraction,
 } from 'discord.js';
 import type { Command } from '../types';
+import { respondCardIdAutocomplete } from '../utils/cardSearch';
 import { Card } from '../database/models/Card';
 import { RARITIES, RARITY_INFO, type Rarity } from '../config/rarities';
 import { buildCardEmbed } from '../utils/cardEmbed';
@@ -23,7 +25,7 @@ export const editcard: Command = {
     .setDescription('(Admin) Modifie une carte existante.')
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addStringOption((o) =>
-      o.setName('id').setDescription('ID de la carte à modifier').setRequired(true),
+      o.setName('id').setDescription('La carte à modifier (tape son nom)').setRequired(true).setAutocomplete(true),
     )
     .addStringOption((o) =>
       o.setName('nom').setDescription('Nouveau nom').setMaxLength(100),
@@ -54,6 +56,10 @@ export const editcard: Command = {
         .setName('requiert')
         .setDescription('IDs requis séparés par des virgules (ou "aucun" pour retirer les prérequis)'),
     ),
+
+  async autocomplete(interaction: AutocompleteInteraction) {
+    await respondCardIdAutocomplete(interaction);
+  },
 
   async execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) {

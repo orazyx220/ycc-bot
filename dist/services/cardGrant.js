@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.mintBonusCard = mintBonusCard;
 exports.transferCard = transferCard;
 exports.takeCard = takeCard;
+exports.clearInventory = clearInventory;
 const Card_1 = require("../database/models/Card");
 const User_1 = require("../database/models/User");
 const Transaction_1 = require("../database/models/Transaction");
@@ -62,4 +63,35 @@ async function takeCard(discordId, cardId, restock) {
     }
     await Transaction_1.Transaction.create({ discordId, type: 'admin_take', amount: 0, cardId });
     return { status: 'ok', card, restocked };
+}
+/**
+ * (Admin) Vide TOUT l'inventaire de cartes d'un membre.
+ * Si `restock` est vrai, chaque exemplaire retiré est remis dans le stock
+ * global (remainingSupply +N, plafonné à maxSupply).
+ */
+async function clearInventory(discordId, restock) {
+    const user = await (0, User_1.getOrCreateUser)(discordId);
+    const removed = user.cards.length;
+    if (removed === 0)
+        return { removed: 0, restocked: false };
+    if (restock) {
+        // Compte combien d'exemplaires de chaque carte, puis remet en stock.
+        const counts = new Map();
+        for (const id of user.cards)
+            counts.set(id, (counts.get(id) ?? 0) + 1);
+        const cards = await Card_1.Card.find({ cardId: { $in: [...counts.keys()] } });
+        for (const card of cards) {
+            const n = counts.get(card.cardId) ?? 0;
+            const room = card.maxSupply - card.remainingSupply;
+            const add = Math.min(n, room);
+            if (add > 0) {
+                card.remainingSupply += add;
+                await card.save();
+            }
+        }
+    }
+    user.cards.splice(0); // vide le tableau
+    await user.save();
+    await Transaction_1.Transaction.create({ discordId, type: 'admin_clear', amount: 0 });
+    return { removed, restocked: restock };
 }

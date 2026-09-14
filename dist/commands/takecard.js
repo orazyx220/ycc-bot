@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.takecard = void 0;
 const discord_js_1 = require("discord.js");
 const cardGrant_1 = require("../services/cardGrant");
+const cardSearch_1 = require("../utils/cardSearch");
 /**
  * /takecard <membre> <id> [rendre_au_stock] — (Admin) retire un exemplaire
  * d'une carte de l'inventaire d'un membre. Par défaut, l'exemplaire est remis
@@ -14,10 +15,13 @@ exports.takecard = {
         .setDescription('(Admin) Retire une carte de l’inventaire d’un membre.')
         .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.Administrator)
         .addUserOption((o) => o.setName('membre').setDescription('Le membre à qui retirer la carte').setRequired(true))
-        .addStringOption((o) => o.setName('id').setDescription('ID de la carte à retirer').setRequired(true))
+        .addStringOption((o) => o.setName('id').setDescription('La carte à retirer (tape son nom)').setRequired(true).setAutocomplete(true))
         .addBooleanOption((o) => o
         .setName('rendre_au_stock')
         .setDescription('Remettre l’exemplaire dans le stock global (défaut : oui)')),
+    async autocomplete(interaction) {
+        await (0, cardSearch_1.respondCardIdAutocomplete)(interaction);
+    },
     async execute(interaction) {
         if (!interaction.memberPermissions?.has(discord_js_1.PermissionFlagsBits.Administrator)) {
             await interaction.reply({

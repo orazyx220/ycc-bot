@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.reserve = void 0;
 const discord_js_1 = require("discord.js");
 const Card_1 = require("../database/models/Card");
+const cardSearch_1 = require("../utils/cardSearch");
 /**
  * /reserve — (Admin) gère la réserve de cartes des drops automatiques.
  *   /reserve add <id> <mode>  → met la carte en réserve (mode achat ou cadeau)
@@ -17,7 +18,7 @@ exports.reserve = {
         .addSubcommand((s) => s
         .setName('add')
         .setDescription('Ajoute une carte à la réserve')
-        .addStringOption((o) => o.setName('id').setDescription('ID de la carte').setRequired(true))
+        .addStringOption((o) => o.setName('id').setDescription('La carte (tape son nom)').setRequired(true).setAutocomplete(true))
         .addStringOption((o) => o
         .setName('mode')
         .setDescription('Comment on l’obtient au drop')
@@ -26,8 +27,11 @@ exports.reserve = {
         .addSubcommand((s) => s
         .setName('remove')
         .setDescription('Retire une carte de la réserve')
-        .addStringOption((o) => o.setName('id').setDescription('ID de la carte').setRequired(true)))
+        .addStringOption((o) => o.setName('id').setDescription('La carte (tape son nom)').setRequired(true).setAutocomplete(true)))
         .addSubcommand((s) => s.setName('list').setDescription('Liste la réserve de drops auto')),
+    async autocomplete(interaction) {
+        await (0, cardSearch_1.respondCardIdAutocomplete)(interaction);
+    },
     async execute(interaction) {
         if (!interaction.memberPermissions?.has(discord_js_1.PermissionFlagsBits.Administrator)) {
             await interaction.reply({

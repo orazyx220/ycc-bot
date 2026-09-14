@@ -280,6 +280,17 @@ const DETAILS: Record<string, Detail> = {
     ],
     examples: ['/takecard membre:@Ami id:dragon-epique', '/takecard membre:@Ami id:dragon-epique rendre_au_stock:false'],
   },
+  clearcards: {
+    name: '/clearcards', admin: true,
+    short: 'Vide tout l’inventaire d’un membre.',
+    summary: 'Retire TOUTES les cartes d’un membre. Par défaut, les exemplaires sont remis dans le stock global.',
+    params: [
+      { name: 'membre', desc: 'Le membre concerné', required: true },
+      { name: 'rendre_au_stock', desc: 'Remettre les exemplaires en stock (défaut : oui)', required: false },
+    ],
+    examples: ['/clearcards membre:@Ami'],
+    notes: 'Pour vider TOUT le serveur d’un coup : `/reset cible:inventaires`.',
+  },
   reserve: {
     name: '/reserve', admin: true,
     short: 'Gère la réserve des drops automatiques.',

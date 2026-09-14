@@ -3,10 +3,12 @@ import {
   PermissionFlagsBits,
   MessageFlags,
   type ChatInputCommandInteraction,
+  type AutocompleteInteraction,
 } from 'discord.js';
 import type { Command } from '../types';
 import { Card } from '../database/models/Card';
 import { User } from '../database/models/User';
+import { respondCardIdAutocomplete } from '../utils/cardSearch';
 
 /**
  * /delcard <id> — (Admin) supprime définitivement une carte.
@@ -19,8 +21,12 @@ export const delcard: Command = {
     .setDescription('(Admin) Supprime une carte.')
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addStringOption((o) =>
-      o.setName('id').setDescription('ID de la carte à supprimer').setRequired(true),
+      o.setName('id').setDescription('La carte à supprimer (tape son nom)').setRequired(true).setAutocomplete(true),
     ),
+
+  async autocomplete(interaction: AutocompleteInteraction) {
+    await respondCardIdAutocomplete(interaction);
+  },
 
   async execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) {

@@ -3,10 +3,12 @@ import {
   PermissionFlagsBits,
   MessageFlags,
   type ChatInputCommandInteraction,
+  type AutocompleteInteraction,
 } from 'discord.js';
 import type { Command } from '../types';
 import { claimFreeCard } from '../services/purchase';
 import { mintBonusCard } from '../services/cardGrant';
+import { respondCardIdAutocomplete } from '../utils/cardSearch';
 
 /**
  * /givecard <membre> <id> [bonus] — (Admin) offre une carte à un membre.
@@ -22,13 +24,17 @@ export const givecard: Command = {
       o.setName('membre').setDescription('Le membre à qui offrir la carte').setRequired(true),
     )
     .addStringOption((o) =>
-      o.setName('id').setDescription('ID de la carte').setRequired(true),
+      o.setName('id').setDescription('La carte (tape son nom)').setRequired(true).setAutocomplete(true),
     )
     .addBooleanOption((o) =>
       o
         .setName('bonus')
         .setDescription('Créer un exemplaire BONUS sans toucher au stock (dépasse la limite)'),
     ),
+
+  async autocomplete(interaction: AutocompleteInteraction) {
+    await respondCardIdAutocomplete(interaction);
+  },
 
   async execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) {

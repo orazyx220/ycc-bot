@@ -3,9 +3,11 @@ import {
   PermissionFlagsBits,
   MessageFlags,
   type ChatInputCommandInteraction,
+  type AutocompleteInteraction,
 } from 'discord.js';
 import type { Command } from '../types';
 import { takeCard } from '../services/cardGrant';
+import { respondCardIdAutocomplete } from '../utils/cardSearch';
 
 /**
  * /takecard <membre> <id> [rendre_au_stock] — (Admin) retire un exemplaire
@@ -21,13 +23,17 @@ export const takecard: Command = {
       o.setName('membre').setDescription('Le membre à qui retirer la carte').setRequired(true),
     )
     .addStringOption((o) =>
-      o.setName('id').setDescription('ID de la carte à retirer').setRequired(true),
+      o.setName('id').setDescription('La carte à retirer (tape son nom)').setRequired(true).setAutocomplete(true),
     )
     .addBooleanOption((o) =>
       o
         .setName('rendre_au_stock')
         .setDescription('Remettre l’exemplaire dans le stock global (défaut : oui)'),
     ),
+
+  async autocomplete(interaction: AutocompleteInteraction) {
+    await respondCardIdAutocomplete(interaction);
+  },
 
   async execute(interaction: ChatInputCommandInteraction) {
     if (!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) {

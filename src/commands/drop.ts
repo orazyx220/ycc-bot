@@ -3,10 +3,12 @@ import {
   PermissionFlagsBits,
   MessageFlags,
   type ChatInputCommandInteraction,
+  type AutocompleteInteraction,
 } from 'discord.js';
 import type { Command } from '../types';
 import { Card } from '../database/models/Card';
 import { buildDropComponents } from '../utils/dropMessage';
+import { respondCardIdAutocomplete } from '../utils/cardSearch';
 
 /**
  * /drop <id> — (Admin) poste une carte achetable dans le salon courant,
@@ -20,11 +22,16 @@ export const drop: Command = {
     .addStringOption((option) =>
       option
         .setName('id')
-        .setDescription('ID de la carte à droper (ex: ycc-originel)')
-        .setRequired(true),
+        .setDescription('La carte à droper (tape son nom)')
+        .setRequired(true)
+        .setAutocomplete(true),
     )
     // Masque la commande aux non-admins dans l'interface Discord.
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+
+  async autocomplete(interaction: AutocompleteInteraction) {
+    await respondCardIdAutocomplete(interaction);
+  },
 
   async execute(interaction: ChatInputCommandInteraction) {
     // Sécurité en profondeur : on revérifie côté serveur (au cas où).

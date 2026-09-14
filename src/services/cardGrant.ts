@@ -91,3 +91,42 @@ export async function takeCard(
   await Transaction.create({ discordId, type: 'admin_take', amount: 0, cardId });
   return { status: 'ok', card, restocked };
 }
+
+/** Résultat d'un vidage complet d'inventaire. */
+export interface ClearResult {
+  removed: number;
+  restocked: boolean;
+}
+
+/**
+ * (Admin) Vide TOUT l'inventaire de cartes d'un membre.
+ * Si `restock` est vrai, chaque exemplaire retiré est remis dans le stock
+ * global (remainingSupply +N, plafonné à maxSupply).
+ */
+export async function clearInventory(discordId: string, restock: boolean): Promise<ClearResult> {
+  const user = await getOrCreateUser(discordId);
+  const removed = user.cards.length;
+  if (removed === 0) return { removed: 0, restocked: false };
+
+  if (restock) {
+    // Compte combien d'exemplaires de chaque carte, puis remet en stock.
+    const counts = new Map<string, number>();
+    for (const id of user.cards) counts.set(id, (counts.get(id) ?? 0) + 1);
+
+    const cards = await Card.find({ cardId: { $in: [...counts.keys()] } });
+    for (const card of cards) {
+      const n = counts.get(card.cardId) ?? 0;
+      const room = card.maxSupply - card.remainingSupply;
+      const add = Math.min(n, room);
+      if (add > 0) {
+        card.remainingSupply += add;
+        await card.save();
+      }
+    }
+  }
+
+  user.cards.splice(0); // vide le tableau
+  await user.save();
+  await Transaction.create({ discordId, type: 'admin_clear', amount: 0 });
+  return { removed, restocked: restock };
+}

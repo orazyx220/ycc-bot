@@ -38,3 +38,21 @@ export async function respondCardAutocomplete(
 
   await interaction.respond(results);
 }
+
+/**
+ * Autocomplétion pour les options `id` de carte : on tape le nom, la suggestion
+ * affiche « Nom (id) » mais renvoie l'ID réel — plus besoin de connaître l'ID.
+ */
+export async function respondCardIdAutocomplete(interaction: AutocompleteInteraction): Promise<void> {
+  const focused = interaction.options.getFocused().toLowerCase();
+  const cards = await Card.find().limit(300);
+
+  const results = cards
+    .filter(
+      (c) => c.name.toLowerCase().includes(focused) || c.cardId.toLowerCase().includes(focused),
+    )
+    .slice(0, 25)
+    .map((c) => ({ name: `${c.name} (${c.cardId})`.slice(0, 100), value: c.cardId }));
+
+  await interaction.respond(results);
+}
