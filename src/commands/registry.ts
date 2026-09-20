@@ -9,6 +9,7 @@ import { carte } from './carte';
 import { drop } from './drop';
 import { inventaire } from './inventaire';
 import { giveYumz } from './give_yumz';
+import { takeYumz } from './take_yumz';
 import { giveAll } from './give_all';
 import { reset } from './reset';
 import { reward } from './reward';
@@ -43,6 +44,7 @@ export const commands: Command[] = [
   drop,
   inventaire,
   giveYumz,
+  takeYumz,
   giveAll,
   reset,
   reward,

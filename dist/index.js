@@ -6,9 +6,11 @@ const registry_1 = require("./commands/registry");
 const connect_1 = require("./database/connect");
 const buyButton_1 = require("./interactions/buyButton");
 const giftButton_1 = require("./interactions/giftButton");
+const yumzClaim_1 = require("./interactions/yumzClaim");
 const messageEarn_1 = require("./events/messageEarn");
 const bumpDetect_1 = require("./events/bumpDetect");
 const autoDrop_1 = require("./services/autoDrop");
+const yumzDrop_1 = require("./services/yumzDrop");
 // --- 1) On vérifie que le token est bien présent AVANT de démarrer ---
 const token = process.env.DISCORD_TOKEN;
 if (!token || token === 'colle_ton_token_ici') {
@@ -32,8 +34,9 @@ const client = new discord_js_1.Client({
 // --- 3) Événement : le bot est connecté et prêt ---
 client.once(discord_js_1.Events.ClientReady, (readyClient) => {
     console.log(`✅ Connecté en tant que ${readyClient.user.tag} !`);
-    // On lance la boucle de drops automatiques (si le salon est configuré).
+    // On lance les drops automatiques (cartes + Yumz), si le salon est configuré.
     (0, autoDrop_1.startAutoDrops)(readyClient);
+    (0, yumzDrop_1.startYumzDrops)(readyClient);
 });
 // --- 3bis) Économie automatique : gains de Yumz à chaque message ---
 client.on(discord_js_1.Events.MessageCreate, async (message) => {
@@ -71,13 +74,16 @@ client.on(discord_js_1.Events.InteractionCreate, async (interaction) => {
     if (interaction.isButton()) {
         const isBuy = (0, buyButton_1.isBuyButton)(interaction.customId);
         const isGift = (0, giftButton_1.isGiftButton)(interaction.customId);
-        if (!isBuy && !isGift)
+        const isYumz = (0, yumzClaim_1.isYumzClaim)(interaction.customId);
+        if (!isBuy && !isGift && !isYumz)
             return;
         try {
             if (isBuy)
                 await (0, buyButton_1.handleBuyButton)(interaction);
-            else
+            else if (isGift)
                 await (0, giftButton_1.handleGiftButton)(interaction);
+            else
+                await (0, yumzClaim_1.handleYumzClaim)(interaction);
         }
         catch (error) {
             console.error('Erreur lors d’un drop (achat/cadeau) :', error);

@@ -192,6 +192,17 @@ const DETAILS: Record<string, Detail> = {
     ],
     examples: ['/give_yumz membre:@Ami montant:1000', '/give_yumz membre:@Ami montant:-500 raison:erreur'],
   },
+  take_yumz: {
+    name: '/take_yumz', admin: true,
+    short: 'Retire des Yumz à un membre.',
+    summary: 'Retire un montant de Yumz à un membre (montant positif). Le solde ne descend jamais sous 0.',
+    params: [
+      { name: 'membre', desc: 'Le membre concerné', required: true },
+      { name: 'montant', desc: 'Yumz à retirer', required: true },
+      { name: 'raison', desc: 'Raison (facultatif)', required: false },
+    ],
+    examples: ['/take_yumz membre:@Ami montant:500'],
+  },
   give_all: {
     name: '/give_all', admin: true,
     short: 'Donne des Yumz à TOUS les membres.',

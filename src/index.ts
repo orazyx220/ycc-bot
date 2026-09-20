@@ -4,9 +4,11 @@ import { commandsByName } from './commands/registry';
 import { connectDatabase } from './database/connect';
 import { isBuyButton, handleBuyButton } from './interactions/buyButton';
 import { isGiftButton, handleGiftButton } from './interactions/giftButton';
+import { isYumzClaim, handleYumzClaim } from './interactions/yumzClaim';
 import { handleMessageForYumz } from './events/messageEarn';
 import { handleDisboardBump } from './events/bumpDetect';
 import { startAutoDrops } from './services/autoDrop';
+import { startYumzDrops } from './services/yumzDrop';
 
 // --- 1) On vérifie que le token est bien présent AVANT de démarrer ---
 const token = process.env.DISCORD_TOKEN;
@@ -35,8 +37,9 @@ const client = new Client({
 // --- 3) Événement : le bot est connecté et prêt ---
 client.once(Events.ClientReady, (readyClient) => {
   console.log(`✅ Connecté en tant que ${readyClient.user.tag} !`);
-  // On lance la boucle de drops automatiques (si le salon est configuré).
+  // On lance les drops automatiques (cartes + Yumz), si le salon est configuré.
   startAutoDrops(readyClient);
+  startYumzDrops(readyClient);
 });
 
 // --- 3bis) Économie automatique : gains de Yumz à chaque message ---
@@ -74,11 +77,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
   if (interaction.isButton()) {
     const isBuy = isBuyButton(interaction.customId);
     const isGift = isGiftButton(interaction.customId);
-    if (!isBuy && !isGift) return;
+    const isYumz = isYumzClaim(interaction.customId);
+    if (!isBuy && !isGift && !isYumz) return;
 
     try {
       if (isBuy) await handleBuyButton(interaction);
-      else await handleGiftButton(interaction);
+      else if (isGift) await handleGiftButton(interaction);
+      else await handleYumzClaim(interaction);
     } catch (error) {
       console.error('Erreur lors d’un drop (achat/cadeau) :', error);
       const contenu = '⚠️ Une erreur est survenue.';

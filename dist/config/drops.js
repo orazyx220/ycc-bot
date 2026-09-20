@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DROPS = void 0;
+exports.YUMZ_DROP = exports.DROPS = void 0;
 /**
  * Réglages des DROPS AUTOMATIQUES.
  *
@@ -16,4 +16,17 @@ exports.DROPS = {
     // Intervalle aléatoire entre deux drops (par défaut : entre 2 h et 6 h).
     minIntervalMs: 2 * 60 * 60 * 1000,
     maxIntervalMs: 6 * 60 * 60 * 1000,
+};
+/**
+ * Drops de YUMZ aléatoires (dans le même salon que les cartes).
+ * Plus FRÉQUENTS que les cartes (moins rares). Le montant est aléatoire,
+ * biaisé vers le bas → les grosses sommes (jusqu'à maxAmount) sont rares.
+ * Premier membre à cliquer « Récupérer » remporte la somme.
+ */
+exports.YUMZ_DROP = {
+    // Plus fréquent que les cartes (par défaut : entre 30 min et 2 h).
+    minIntervalMs: 30 * 60 * 1000,
+    maxIntervalMs: 2 * 60 * 60 * 1000,
+    minAmount: 500,
+    maxAmount: 15_000,
 };
