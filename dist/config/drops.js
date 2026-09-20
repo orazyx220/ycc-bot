@@ -12,7 +12,7 @@ exports.DROPS = {
     // Salon où sont postés les drops auto.
     // Remplace par l'ID de ton salon (Mode dev → clic droit → Copier l'ID).
     // Tant qu'il vaut le placeholder, les drops auto restent DÉSACTIVÉS.
-    channelId: '1362923885258866739',
+    channelId: '1548388687367110866',
     // Intervalle aléatoire entre deux drops (par défaut : entre 2 h et 6 h).
     minIntervalMs: 2 * 60 * 60 * 1000,
     maxIntervalMs: 6 * 60 * 60 * 1000,
