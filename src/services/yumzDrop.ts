@@ -19,11 +19,17 @@ function randomInterval(): number {
   return Math.floor(Math.random() * (maxIntervalMs - minIntervalMs + 1)) + minIntervalMs;
 }
 
-/** Montant aléatoire, biaisé vers le bas (grosses sommes rares). */
+/** Montant aléatoire : on tire un palier selon les poids, puis un montant dedans. */
 function randomAmount(): number {
-  const { minAmount, maxAmount } = YUMZ_DROP;
-  const skew = Math.random() * Math.random(); // proche de 0 la plupart du temps
-  return Math.floor(minAmount + skew * (maxAmount - minAmount));
+  const tiers = YUMZ_DROP.tiers;
+  const total = tiers.reduce((sum, t) => sum + t.weight, 0);
+  let r = Math.random() * total;
+  for (const t of tiers) {
+    r -= t.weight;
+    if (r < 0) return Math.floor(t.min + Math.random() * (t.max - t.min));
+  }
+  const last = tiers[tiers.length - 1]!;
+  return Math.floor(last.min + Math.random() * (last.max - last.min));
 }
 
 /** Poste un drop de Yumz : premier à cliquer « Récupérer » gagne. */

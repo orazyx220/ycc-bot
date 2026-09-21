@@ -26,6 +26,14 @@ export const YUMZ_DROP = {
   // Plus fréquent que les cartes (par défaut : entre 30 min et 2 h).
   minIntervalMs: 30 * 60 * 1000,
   maxIntervalMs: 2 * 60 * 60 * 1000,
-  minAmount: 500,
-  maxAmount: 15_000,
+
+  // Paliers de montant avec poids relatifs : petites sommes très fréquentes,
+  // gros lots rares (le jackpot 8k-15k ne sort que ~3% du temps).
+  tiers: [
+    { min: 100, max: 500, weight: 45 }, // petit — très fréquent
+    { min: 500, max: 1500, weight: 30 }, // moyen
+    { min: 1500, max: 4000, weight: 15 }, // gros
+    { min: 4000, max: 8000, weight: 7 }, // très gros — rare
+    { min: 8000, max: 15000, weight: 3 }, // jackpot — très rare
+  ],
 } as const;
