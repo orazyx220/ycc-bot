@@ -24,9 +24,14 @@ exports.DROPS = {
  * Premier membre à cliquer « Récupérer » remporte la somme.
  */
 exports.YUMZ_DROP = {
-    // Plus fréquent que les cartes (par défaut : entre 30 min et 2 h).
-    minIntervalMs: 30 * 60 * 1000,
-    maxIntervalMs: 2 * 60 * 60 * 1000,
+    // Intervalle TOTALEMENT IRRÉGULIER (loi exponentielle, sans mémoire) :
+    // parfois quelques secondes, parfois plusieurs heures — impossible à camper.
+    // On borne seulement les extrêmes, et `meanIntervalMs` fixe la fréquence moyenne.
+    minIntervalMs: 20 * 1000, // jamais moins de 20 secondes
+    maxIntervalMs: 4 * 60 * 60 * 1000, // jamais plus de 4 heures
+    meanIntervalMs: 90 * 60 * 1000, // ~1h30 en moyenne, mais très dispersé
+    // Probabilité qu'un créneau ne donne AUCUN drop (silence total, pour l'effet « rien »).
+    skipChance: 0.15, // 15 % des créneaux sont sautés
     // Paliers de montant avec poids relatifs : petites sommes très fréquentes,
     // gros lots rares (le jackpot 8k-15k ne sort que ~3% du temps).
     tiers: [

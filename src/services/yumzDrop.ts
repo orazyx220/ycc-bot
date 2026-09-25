@@ -13,10 +13,16 @@ function dropChannelConfigured(): boolean {
   return DROPS.channelId.length > 0 && !DROPS.channelId.startsWith('ID_');
 }
 
-/** Délai aléatoire (ms) avant le prochain drop de Yumz. */
+/**
+ * Délai aléatoire (ms) avant le prochain drop de Yumz.
+ * On utilise une loi EXPONENTIELLE (processus de Poisson) : elle est « sans
+ * mémoire », donc le prochain drop est totalement imprévisible — souvent court,
+ * parfois très long. On borne juste les extrêmes pour rester raisonnable.
+ */
 function randomInterval(): number {
-  const { minIntervalMs, maxIntervalMs } = YUMZ_DROP;
-  return Math.floor(Math.random() * (maxIntervalMs - minIntervalMs + 1)) + minIntervalMs;
+  const { minIntervalMs, maxIntervalMs, meanIntervalMs } = YUMZ_DROP;
+  const raw = -meanIntervalMs * Math.log(1 - Math.random());
+  return Math.min(maxIntervalMs, Math.max(minIntervalMs, Math.floor(raw)));
 }
 
 /** Montant aléatoire : on tire un palier selon les poids, puis un montant dedans. */
@@ -64,7 +70,10 @@ export function startYumzDrops(client: Client): void {
   const scheduleNext = (): void => {
     setTimeout(async () => {
       try {
-        await dropOnce(client);
+        // Parfois, aucun drop : silence total (effet « rien du tout »).
+        if (Math.random() >= YUMZ_DROP.skipChance) {
+          await dropOnce(client);
+        }
       } catch (error) {
         console.error('Erreur pendant un drop de Yumz :', error);
       }
