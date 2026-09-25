@@ -27,6 +27,9 @@ const userSchema = new Schema(
     // Cooldowns de /travailler et de la roue (null = jamais utilisé).
     workLastClaim: { type: Date, default: null },
     wheelLastSpin: { type: Date, default: null },
+
+    // Dates des dernières ouvertures de boosters (pour la limite hebdomadaire).
+    boosterOpens: { type: [Date], required: true, default: [] },
   },
   { timestamps: true }, // ajoute createdAt / updatedAt automatiquement
 );

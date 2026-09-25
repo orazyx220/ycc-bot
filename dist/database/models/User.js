@@ -24,6 +24,8 @@ const userSchema = new mongoose_1.Schema({
     // Cooldowns de /travailler et de la roue (null = jamais utilisé).
     workLastClaim: { type: Date, default: null },
     wheelLastSpin: { type: Date, default: null },
+    // Dates des dernières ouvertures de boosters (pour la limite hebdomadaire).
+    boosterOpens: { type: [Date], required: true, default: [] },
 }, { timestamps: true });
 exports.User = (0, mongoose_1.model)('User', userSchema);
 /**

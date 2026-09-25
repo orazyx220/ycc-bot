@@ -6,7 +6,7 @@ import {
 } from 'discord.js';
 import type { Command } from '../types';
 import { openBooster } from '../services/booster';
-import { BOOSTER_PRICE } from '../config/booster';
+import { BOOSTER_PRICE, BOOSTER_WEEKLY_LIMIT } from '../config/booster';
 import { rarityInfo } from '../config/rarities';
 
 /**
@@ -16,7 +16,9 @@ import { rarityInfo } from '../config/rarities';
 export const ouvrir: Command = {
   data: new SlashCommandBuilder()
     .setName('ouvrir')
-    .setDescription(`Ouvre un booster (${BOOSTER_PRICE} Yumz) et tire une carte au hasard.`),
+    .setDescription(
+      `Ouvre un booster (${BOOSTER_PRICE} Yumz, max ${BOOSTER_WEEKLY_LIMIT}/semaine) et tire une carte.`,
+    ),
 
   async execute(interaction: ChatInputCommandInteraction) {
     const result = await openBooster(interaction.user.id);
@@ -28,6 +30,17 @@ export const ouvrir: Command = {
           flags: MessageFlags.Ephemeral,
         });
         return;
+
+      case 'limited': {
+        const unix = Math.floor(result.nextAt.getTime() / 1000);
+        await interaction.reply({
+          content:
+            `⏳ Tu as atteint la limite de **${result.limit} boosters par semaine**.\n` +
+            `Prochaine ouverture disponible <t:${unix}:R> (le <t:${unix}:F>).`,
+          flags: MessageFlags.Ephemeral,
+        });
+        return;
+      }
 
       case 'empty':
         await interaction.reply({

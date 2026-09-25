@@ -2,11 +2,17 @@ import { Card, type CardDoc } from '../database/models/Card';
 import { User, getOrCreateUser } from '../database/models/User';
 import { Transaction } from '../database/models/Transaction';
 import { RARITIES, type Rarity } from '../config/rarities';
-import { BOOSTER_PRICE, BOOSTER_ODDS } from '../config/booster';
+import {
+  BOOSTER_PRICE,
+  BOOSTER_ODDS,
+  BOOSTER_WEEKLY_LIMIT,
+  BOOSTER_WINDOW_MS,
+} from '../config/booster';
 
 export type BoosterResult =
   | { status: 'ok'; card: CardDoc; newBalance: number }
   | { status: 'insufficient'; price: number; balance: number }
+  | { status: 'limited'; nextAt: Date; limit: number }
   | { status: 'empty' };
 
 /** Tire une rareté au hasard selon les poids configurés. */
@@ -29,6 +35,19 @@ function rollRarity(): Rarity {
  */
 export async function openBooster(discordId: string): Promise<BoosterResult> {
   const user = await getOrCreateUser(discordId);
+
+  // Limite : maximum BOOSTER_WEEKLY_LIMIT ouvertures sur une fenêtre glissante.
+  const cutoffMs = Date.now() - BOOSTER_WINDOW_MS;
+  const cutoff = new Date(cutoffMs);
+  const opens = (user.boosterOpens ?? []).map((d) => new Date(d as unknown as string).getTime());
+  const recent = opens.filter((t) => t > cutoffMs);
+  if (recent.length >= BOOSTER_WEEKLY_LIMIT) {
+    // Prochaine ouverture possible = quand la plus ancienne des ouvertures récentes expire.
+    const oldest = Math.min(...recent);
+    const nextAt = new Date(oldest + BOOSTER_WINDOW_MS);
+    return { status: 'limited', nextAt, limit: BOOSTER_WEEKLY_LIMIT };
+  }
+
   if (user.yumz < BOOSTER_PRICE) {
     return { status: 'insufficient', price: BOOSTER_PRICE, balance: user.yumz };
   }
@@ -76,8 +95,14 @@ export async function openBooster(discordId: string): Promise<BoosterResult> {
 
   const card = pool[Math.floor(Math.random() * pool.length)]!;
 
-  // On ajoute la carte à l'inventaire (sans toucher au stock).
-  await User.updateOne({ discordId }, { $push: { cards: card.cardId } });
+  // On ajoute la carte à l'inventaire (sans toucher au stock) et on enregistre
+  // l'ouverture pour la limite hebdomadaire.
+  await User.updateOne(
+    { discordId },
+    { $push: { cards: card.cardId, boosterOpens: new Date() } },
+  );
+  // On purge les ouvertures trop anciennes (hors fenêtre) pour éviter que le tableau grossisse.
+  await User.updateOne({ discordId }, { $pull: { boosterOpens: { $lt: cutoff } } });
   await Transaction.create({
     discordId,
     type: 'booster',

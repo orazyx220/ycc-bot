@@ -12,7 +12,7 @@ const rarities_1 = require("../config/rarities");
 exports.ouvrir = {
     data: new discord_js_1.SlashCommandBuilder()
         .setName('ouvrir')
-        .setDescription(`Ouvre un booster (${booster_2.BOOSTER_PRICE} Yumz) et tire une carte au hasard.`),
+        .setDescription(`Ouvre un booster (${booster_2.BOOSTER_PRICE} Yumz, max ${booster_2.BOOSTER_WEEKLY_LIMIT}/semaine) et tire une carte.`),
     async execute(interaction) {
         const result = await (0, booster_1.openBooster)(interaction.user.id);
         switch (result.status) {
@@ -22,6 +22,15 @@ exports.ouvrir = {
                     flags: discord_js_1.MessageFlags.Ephemeral,
                 });
                 return;
+            case 'limited': {
+                const unix = Math.floor(result.nextAt.getTime() / 1000);
+                await interaction.reply({
+                    content: `⏳ Tu as atteint la limite de **${result.limit} boosters par semaine**.\n` +
+                        `Prochaine ouverture disponible <t:${unix}:R> (le <t:${unix}:F>).`,
+                    flags: discord_js_1.MessageFlags.Ephemeral,
+                });
+                return;
+            }
             case 'empty':
                 await interaction.reply({
                     content: '📭 Aucune carte n’existe encore. Reviens plus tard !',
